@@ -4,8 +4,8 @@ sys.path.append(getcwd() + "/libs")
 
 from flask import Flask, render_template
 from api import tracker
-from classes.Project import Project
-from classes.ProjectList import ProjectList
+from classes.project import Project, ProjectList
+from classes.stories import Story, StoryList 
 
 app = Flask(__name__)
 app.debug = True
@@ -20,9 +20,17 @@ def project(project_id):
 	pass
 
 
-@app.route("/wip.json")
+@app.route("/wip")
 def wip(type=None):
-	pass
+
+	project_list = ProjectList(tracker.getProjects())
+	product_ids = map(lambda id: project.id, project_list)
+	stories = StoryList(tracker.getStories(product_ids))
+	users = UserList(stories)
+
+	return render_template('wip.html', projects=projects)
+	
+
 
 @app.route("/burndown/<int:tracker_id>.json")
 def burndown(tracker_id, type=None):
