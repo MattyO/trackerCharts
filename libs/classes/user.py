@@ -5,7 +5,7 @@ class User:
 		self.current_stories = []
 
 	def updateWip(self, story):
-		if story.current_state != "accepted" and story.current_state != "delivered":
+		if story.owned_by != None and story.owned_by == self.name and story.current_state != "accepted" and story.current_state != "delivered":
 			self.wip += 1
 			self.current_stories.append(story)
 	
@@ -18,5 +18,4 @@ def UserList(story_list):
 				users.update({story.owned_by:User(story.owned_by)})
 			users[story.owned_by].updateWip(story)
 	return users.values()
-
 
