@@ -1,8 +1,9 @@
 import unittest
+import json
 import xml.etree.ElementTree as ET
 import sys
 sys.path.append("../../libs")
-from classes.user import User, UserList
+from classes.user import User, UserList, UserList_toJson
 from classes.story import Story
 
 class UserTest(unittest.TestCase):
@@ -35,4 +36,12 @@ class UserTest(unittest.TestCase):
 
 		a_user.updateWip(story)
 		self.assertEquals(a_user.wip, 0)
+	
+	def test_UserList_tojson(self):
+		a_user = User("Eric Hankinson")
+		story_xml = ET.parse("data/story_2").getroot()
+		story = Story(story_xml)
+		a_user.updateWip(story)
+		user_list = [a_user]
+		self.assertEquals(UserList_toJson(user_list),json.dumps([{"name": "Eric Hankinson", "current_stories": [{"name": "course-create-list Config & SQL Injection", "id": "37451583"}], "wip": 1}]))
 

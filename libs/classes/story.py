@@ -1,9 +1,13 @@
 class Story: 
 	def __init__(self, xml):
 		attrs = dict()
+		self.lables = []
 		for child in xml:
 			if len(child.findall('.//*')) == 0:
-				attrs[child.tag] = child.text
+				if child.tag == "labels":
+					attrs[child.tag] = child.text.split(",")
+				else:
+					attrs[child.tag] = child.text
 
 		if attrs.has_key('owned_by') is False:
 			attrs['owned_by'] = None

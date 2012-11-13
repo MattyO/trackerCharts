@@ -3,9 +3,12 @@ from os import getcwd
 sys.path.append(getcwd() + "/libs")
 
 from flask import Flask, render_template
+
 from api import tracker
-from classes.project import Project, ProjectList
-from classes.stories import Story, StoryList 
+from api import localdata
+
+from classes.project import Project, ProjectList, Burndown, addState
+from classes.story import Story, StoryList 
 
 app = Flask(__name__)
 app.debug = True
@@ -41,8 +44,22 @@ def config():
 	pass
 
 @app.route("/update")
-def updat():
-	pass
+def update():
+
+	localdata.saveProjectsXML(tracker.getProjects())
+	project_list = ProjectList(localdata.getProjectsXML())
+
+	for project in project_list:
+		test_stories = tracker.getStories(project.id)
+		localdata.saveStoriesXML(test_stories, str(project.id))
+
+	for project in project_list:
+		burndown = Burndown(localdata.getBurndownStates(project.id), project.id)
+		test_stories = StoryList([localdata.getStoriesXML(project.id)])
+		burndown = addState(burndown, test_stories)
+		localdata.saveBurndownStates(burndown.states, project.id)
+
+	return "updated"
 
 
 if __name__ == "__main__":

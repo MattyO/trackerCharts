@@ -16,16 +16,12 @@ def getProjects():
 	global token, header
 
 	projectRequest = requests.get('https://www.pivotaltracker.com/services/v3/projects',headers=header)
-	print projectRequest.text
 	return ET.fromstring(projectRequest.text)
 
-def getStories(tracker_ids):
+def getStories(tracker_id):
 	global header
-	stories = [] 
 
-	for id in tracker_ids:
-		story_request = requests.get("https://www.pivotaltracker.com/services/v3/projects/" + id + "/stories",headers=header)
-		stories.append(ET.fromstring(story_request.text))
+	story_request = requests.get("https://www.pivotaltracker.com/services/v3/projects/" + tracker_id + "/stories",headers=header)
 
-	return stories
+	return ET.fromstring(story_request.text)
 

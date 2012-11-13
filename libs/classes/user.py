@@ -1,3 +1,5 @@
+import json
+
 class User: 
 	def __init__(self, name):
 		self.name = name
@@ -18,4 +20,15 @@ def UserList(story_list):
 				users.update({story.owned_by:User(story.owned_by)})
 			users[story.owned_by].updateWip(story)
 	return users.values()
+
+def UserList_toJson(user_list):
+	dumpable = []
+	for user in user_list:
+		current_stories = [] 
+		for story in user.current_stories:
+			current_stories.append({"name":story.name, "id":story.id})
+			dumpable.append({"name":user.name, "wip":user.wip, "current_stories":current_stories})
+	return json.dumps(dumpable)
+
+
 
