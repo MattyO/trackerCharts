@@ -7,8 +7,9 @@ from flask import Flask, render_template
 from api import tracker
 from api import localdata
 
-from classes.project import Project, ProjectList, Burndown, addState
+from classes.project import Project, ProjectList, Burndown, addState, burndown_tojson
 from classes.story import Story, StoryList 
+from classes.user import  User, UserList, userlist_tojson
 
 app = Flask(__name__)
 app.debug = True
@@ -20,24 +21,44 @@ def overview():
 
 @app.route("/<int:tracker_id>")
 def project(project_id):
-	pass
+	return "project burndowns go here"
+
+@app.route("/<int:project_id>/burndown.json")
+def projects_json(project_id):
+	project_id = str(project_id)
+	return burndown_tojson(Burndown(localdata.getBurndownStates(project_id), project_id))
+	
+@app.route("/wip.json")
+def wip_json():
+	project_list = ProjectList(localdata.getProjectsXML())
+	project_ids = map(lambda project: project.id, project_list)
+	stories_xml_list = []
+	app.logger.debug(project_ids)
+	for id in project_ids :
+		stories_xml_list.append(localdata.getStoriesXML(id))
+
+	stories = StoryList(stories_xml_list)
+	users = UserList(stories)
+
+	return userlist_tojson(users)
 
 
 @app.route("/wip")
 def wip(type=None):
 
-	project_list = ProjectList(tracker.getProjects())
-	product_ids = map(lambda id: project.id, project_list)
-	stories = StoryList(tracker.getStories(product_ids))
+	project_list = ProjectList(localdata.getProjectsXML())
+	project_ids = map(lambda project: project.id, project_list)
+	stories_xml_list = []
+	app.logger.debug(project_ids)
+	for id in project_ids :
+		stories_xml_list.append(localdata.getStoriesXML(id))
+
+	stories = StoryList(stories_xml_list)
 	users = UserList(stories)
 
-	return render_template('wip.html', projects=projects)
+	return render_template('wip.html', projects=project_list , users=users)
 	
 
-
-@app.route("/burndown/<int:tracker_id>.json")
-def burndown(tracker_id, type=None):
-	pass
 
 @app.route("/config/")
 def config():

@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1> WIP </h1>
+
+{% for user in users %}
+<p> {{user.name}} - {{user.wip}} </p>
+{% endfor %}
+{% endblock %}

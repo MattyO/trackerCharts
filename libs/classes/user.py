@@ -21,6 +21,16 @@ def UserList(story_list):
 			users[story.owned_by].updateWip(story)
 	return users.values()
 
+def userlist_tojson(user_list):
+	dumpable = []
+	for user in user_list:
+		userobj = {"name":user.name, "wip":user.wip, "stories":[]}
+		for story in user.current_stories:
+			userobj["stories"].append(story.name)
+		dumpable.append(userobj)
+
+	return json.dumps(dumpable) 
+
 def UserList_toJson(user_list):
 	dumpable = []
 	for user in user_list:
