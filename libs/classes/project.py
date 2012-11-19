@@ -21,7 +21,7 @@ def ProjectList(project_xml):
 	return projects
 
 class Burndown:
-	def __init__(self, states, project_name):
+	def __init__(self, project_name, states=[]):
 		self.project_name = project_name
 		self.states = states
 		if self.states is None:
@@ -36,7 +36,7 @@ def addState(burndown, stories):
 	time = strftime('%H:%M:%S',localtime())
 	datetime = date + " " + time 
 
-	state = {"datetime": datetime,"all":{"total":0}} 
+	state = {"datetime": datetime,"all":{"total":0}}
 	for story in stories:
 		if state["all"].has_key(story.current_state) == False:
 			state["all"][story.current_state] = 0
@@ -44,7 +44,7 @@ def addState(burndown, stories):
 		for label in story.labels:
 			if not state.has_key(label):
 				state[label] = {story.current_state:0}
-			elif state[label].has_key(story.current_state) == False:
+			elif label != "datetime" and state[label].has_key(story.current_state) == False:
 				state[label][story.current_state] = 0
 				state[label]["total"] = 0
 			state[label][story.current_state] += 1

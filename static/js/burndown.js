@@ -13,7 +13,8 @@ $(document).ready(function(){
                         lines[key] = new Array();
                     }
                     var testobj = {count:d, datetime:state.datetime}
-                    //console.log(testobj);
+                    console.log("test object");
+                    console.log(testobj);
                     lines[key].push({count:d, datetime:state.datetime});
                 });
             });
