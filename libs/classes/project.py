@@ -68,22 +68,22 @@ def append_burndown_state(burndown, burndown_state):
 def _initial_state():
 	return {"total":0}
 
-def _increment_burndown_label_state(burndown_state, label, story_state):
-	burndown_state[label][story_state] += 1
-	return burndown_state
-
 def _needs_burndown_label(burndown_state, label):
 	return not burndown_state.has_key(label)
+
+def _needs_burndown_label_state(burndown_state, label, story_state):
+	return not burndown_state[label].has_key(story_state)
 
 def _add_burndown_label(burndown_state, label):
 	burndown_state[label] = _initial_state()
 	return burndown_state
 
-def _needs_burndown_label_state(burndown_state, label, story_state):
-	return not burndown_state[label].has_key(story_state)
-
 def _add_burndown_label_state(burndown_state, label, story_state):
 	burndown_state[label][story_state] = 0
+	return burndown_state
+
+def _increment_burndown_label_state(burndown_state, label, story_state):
+	burndown_state[label][story_state] += 1
 	return burndown_state
 
 def _append_burndown_state_datetime(state):
