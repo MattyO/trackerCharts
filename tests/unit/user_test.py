@@ -14,7 +14,7 @@ class UserTest(unittest.TestCase):
 
 
 	def test_updateWip(self):
-		a_user = User("Eric Hankinson")
+		a_user = User("George")
 		story_xml = ET.parse("data/story_2").getroot()
 		story = Story(story_xml)
 
@@ -38,10 +38,10 @@ class UserTest(unittest.TestCase):
 		self.assertEquals(a_user.wip, 0)
 	
 	def test_UserList_tojson(self):
-		a_user = User("Eric Hankinson")
+		a_user = User("George")
 		story_xml = ET.parse("data/story_2").getroot()
 		story = Story(story_xml)
 		a_user.updateWip(story)
 		user_list = [a_user]
-		self.assertEquals(UserList_toJson(user_list),json.dumps([{"name": "Eric Hankinson", "current_stories": [{"name": "course-create-list Config & SQL Injection", "id": "37451583"}], "wip": 1}]))
+		self.assertEquals(UserList_toJson(user_list),json.dumps([{"name": "George", "current_stories": [{"name": "All the Things", "id": "33333333"}], "wip": 1}]))
 

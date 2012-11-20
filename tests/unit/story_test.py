@@ -20,7 +20,7 @@ class StoryTest(unittest.TestCase):
 	def test_story_owned_by_is_set(self):
 		story_xml = ET.parse("data/story_2").getroot()
 		story = Story(story_xml)
-		self.assertEqual(story.owned_by, "Eric Hankinson")
+		self.assertEqual(story.owned_by, "George")
 
 class StoryListTest(unittest.TestCase):
 
