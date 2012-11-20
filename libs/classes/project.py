@@ -34,6 +34,12 @@ def addState(burndown, stories):
 	burndown_state = {"all":_initial_state()}
 	for story in stories:
 
+		if _needs_burndown_label_state(burndown_state, "all", story.current_state):
+			burndown_state = _add_burndown_label_state(burndown_state, "all", story.current_state)
+
+		burndown_state = _increment_burndown_label_state(burndown_state , "all", story.current_state)
+		burndown_state = _increment_burndown_label_state(burndown_state , "all", "total")
+
 		for label in story.labels:
 			if _needs_burndown_label(burndown_state , label):
 				burndown_state = _add_burndown_label(burndown_state, label)
@@ -41,13 +47,8 @@ def addState(burndown, stories):
 			if _needs_burndown_label_state(burndown_state, label, story.current_state):
 				burndown_state = _add_burndown_label_state(burndown_state, label, story.current_state)
 
-			if _needs_burndown_label_state(burndown_state, "all", story.current_state):
-				burndown_state = _add_burndown_label_state(burndown_state, "all", story.current_state)
-
 			burndown_state = _increment_burndown_label_state(burndown_state , label, story.current_state)
 			burndown_state = _increment_burndown_label_state(burndown_state , label, "total")
-			burndown_state = _increment_burndown_label_state(burndown_state , "all", story.current_state)
-			burndown_state = _increment_burndown_label_state(burndown_state , "all", "total")
 
 	_normalize_burndown_state(burndown_state)
 

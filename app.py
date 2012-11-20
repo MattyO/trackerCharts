@@ -75,7 +75,7 @@ def update():
 		localdata.saveStoriesXML(test_stories, str(project.id))
 
 	for project in project_list:
-		burndown = Burndown(localdata.getBurndownStates(project.id), project.id)
+		burndown = Burndown(project.id, localdata.getBurndownStates(project.id))
 		test_stories = StoryList([localdata.getStoriesXML(project.id)])
 		burndown = addState(burndown, test_stories)
 		localdata.saveBurndownStates(burndown.states, project.id)

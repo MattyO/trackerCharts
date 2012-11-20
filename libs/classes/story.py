@@ -11,6 +11,8 @@ class Story:
 
 		if attrs.has_key('owned_by') is False:
 			attrs['owned_by'] = None
+		if attrs.has_key('labels') is False:
+			attrs['labels'] = []
 
 		self.__dict__ = attrs
 	
