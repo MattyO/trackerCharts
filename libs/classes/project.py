@@ -11,7 +11,6 @@ class Project:
 				attrs[child.tag] = child.text
 		self.__dict__ = attrs
 
-
 def ProjectList(project_xml):
 	projects = [] 
 
@@ -41,6 +40,7 @@ def addState(burndown, stories):
 
 			if _needs_burndown_label_state(burndown_state, label, story.current_state):
 				burndown_state = _add_burndown_label_state(burndown_state, label, story.current_state)
+
 			if _needs_burndown_label_state(burndown_state, "all", story.current_state):
 				burndown_state = _add_burndown_label_state(burndown_state, "all", story.current_state)
 
@@ -89,13 +89,13 @@ def _add_burndown_label_state(burndown_state, label, story_state):
 def _append_burndown_state_datetime(state):
 	date = strftime('%Y.%m.%d',localtime())
 	time = strftime('%H:%M:%S',localtime())
-	state["datetime"] = date + " " + time 
+	state["datetime"] = date + " " + time
 	return state
 
 def _normalize_burndown_state(state):
 	for story_states in state["all"].keys():
 		for state_label in state.keys():
-				if state_label != "datetime" and state[state_label].has_key(story_states) == False:
+				if state[state_label].has_key(story_states) == False:
 					state[state_label][story_states] = 0
 
 
