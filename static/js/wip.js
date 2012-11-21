@@ -10,9 +10,10 @@ $(document).ready(function(){
                 }
             });
 
+            var wipWidth = $("#wip").width();
             var chart = d3.select("#wip").append("svg")
                 .attr("class", "chart")
-                .attr("width", data.length*20)
+                .attr("width", wipWidth )
                 .attr("height", 300 );
             chart.selectAll('rect')
                     .data(data)
@@ -25,7 +26,7 @@ $(document).ready(function(){
                 .attr("y1",max*20)
                 .attr("y2",max*20)
                 .attr("x1", 0)
-                .attr("x2", data.length*20)
+                .attr("x2", wipWidth)
                 .style("stroke", "#000");
 
             //names on charts

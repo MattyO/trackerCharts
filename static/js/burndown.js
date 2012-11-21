@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $.ajax({
-        url:"/585891/burndown.json", 
+        url:"/11111/burndown.json", 
         dataType:"json",
         success: function(data){
             var lines = new Array(); 
