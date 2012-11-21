@@ -14,7 +14,7 @@ $(document).ready(function(){
             var chart = d3.select("#wip").append("svg")
                 .attr("class", "chart")
                 .attr("width", wipWidth )
-                .attr("height", 300 );
+                .attr("height", max*20);
             chart.selectAll('rect')
                     .data(data)
                 .enter().append('rect')
