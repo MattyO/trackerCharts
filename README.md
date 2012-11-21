@@ -14,7 +14,7 @@ returns a json for the current burndown of the project found in the url.  This i
 Returns a json of current wip computed for each individal and the stories that make up that wip
 ###in progress end points###
 the following endpoints are in progress 
-* /<project_id>
+* /(project_id)
 ** this will be the place to provide mutliple burndown charts based on labels.  
 * /config
 ** when the system is updated to contain other apis to pull stories from.  We will also need to provide some way to define how stories add up.  in effect ordering story states [unschedualed, started, finished...etc]
