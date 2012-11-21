@@ -60,7 +60,7 @@ def addState(burndown, stories):
 
 def append_burndown_state(burndown, burndown_state):
 	if burndown.states == []:
-		burndown.states  = burndown_state
+		burndown.states  = [burndown_state]
 	else:
 		burndown.states.append(burndown_state)
 
