@@ -8,7 +8,7 @@ Endpoints
 The following are some imporant endpoints
 ###/update###
 Updates the current state of all projects, their burndowns, and wip for all persons.  Note that this makes trackerCharts only as current as the last update.
-###/<project_id>/burndown.json###
+###/(project_id)/burndown.json###
 returns a json for the current burndown of the project found in the url.  This is broken up by al cards as well as is broken up by labels.  Epics show up as labels.  
 ###/wip.json###
 Returns a json of current wip computed for each individal and the stories that make up that wip
