@@ -14,21 +14,21 @@ returns a json for the current burndown of the project found in the url.  This i
 Returns a json of current wip computed for each individal and the stories that make up that wip
 ###in progress end points###
 the following endpoints are in progress 
-- /<project_id>
--- this will be the place to provide mutliple burndown charts based on labels.  
-- /config
--- when the system is updated to contain other apis to pull stories from.  We will also need to provide some way to define how stories add up.  in effect ordering story states [unschedualed, started, finished...etc]
+* /<project_id>
+** this will be the place to provide mutliple burndown charts based on labels.  
+* /config
+** when the system is updated to contain other apis to pull stories from.  We will also need to provide some way to define how stories add up.  in effect ordering story states [unschedualed, started, finished...etc]
 
 Install
 -------
 1. clone / downlaod repo
 2. install dependencies
--- found in pip-install file
+** found in pip-install file
 3. rename and update example-config.py to config.py.  Replace containing user name and password items
--- found in lib directory
+** found in lib directory
 4. run app
--- python app.py
+** python app.py
 
 Testing
 -------
-- nosetest tests/unit
+* nosetest tests/unit
