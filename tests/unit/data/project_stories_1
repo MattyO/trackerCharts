@@ -1,0 +1,59 @@
+<stories count="4" total="4" type="array">
+  <story>
+    <id type="integer">55555555</id>
+    <project_id type="integer">666666</project_id>
+    <story_type>feature</story_type>
+    <url>http://www.pivotaltracker.com/story/show/55555555</url>
+    <estimate type="integer">1</estimate>
+    <current_state>started</current_state>
+    <description>test</description>
+    <name>Test Story 1</name>
+    <requested_by>Matt</requested_by>
+    <owned_by>Matt</owned_by>
+    <created_at type="datetime">2012/11/12 05:54:28 UTC</created_at>
+    <updated_at type="datetime">2012/11/12 05:54:38 UTC</updated_at>
+  </story>
+  <story>
+    <id type="integer">77777777</id>
+    <project_id type="integer">666666</project_id>
+    <story_type>feature</story_type>
+    <url>http://www.pivotaltracker.com/story/show/77777777</url>
+    <estimate type="integer">1</estimate>
+    <current_state>started</current_state>
+    <description>testsssss</description>
+    <name>All The Things</name>
+    <requested_by>Matt</requested_by>
+    <owned_by>Matt</owned_by>
+    <created_at type="datetime">2012/11/20 21:54:17 UTC</created_at>
+    <updated_at type="datetime">2012/11/20 21:54:24 UTC</updated_at>
+    <labels>another_epic</labels>
+  </story>
+  <story>
+    <id type="integer">88888888</id>
+    <project_id type="integer">666666</project_id>
+    <story_type>feature</story_type>
+    <url>http://www.pivotaltracker.com/story/show/39902187</url>
+    <estimate type="integer">-1</estimate>
+    <current_state>unscheduled</current_state>
+    <description>etst</description>
+    <name>super epical</name>
+    <requested_by>Matt</requested_by>
+    <created_at type="datetime">2012/11/20 21:54:41 UTC</created_at>
+    <updated_at type="datetime">2012/11/20 21:54:41 UTC</updated_at>
+    <labels>super_epic</labels>
+  </story>
+  <story>
+    <id type="integer">99999999</id>
+    <project_id type="integer">666666</project_id>
+    <story_type>feature</story_type>
+    <url>http://www.pivotaltracker.com/story/show/99999999</url>
+    <estimate type="integer">-1</estimate>
+    <current_state>unscheduled</current_state>
+    <description>the first test story</description>
+    <name>test story 1</name>
+    <requested_by>Matt</requested_by>
+    <created_at type="datetime">2012/11/20 21:54:04 UTC</created_at>
+    <updated_at type="datetime">2012/11/20 21:54:05 UTC</updated_at>
+    <labels>another_epic</labels>
+  </story>
+</stories>

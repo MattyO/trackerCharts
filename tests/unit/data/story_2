@@ -1,0 +1,15 @@
+  <story>
+    <id type="integer">22222222</id>
+    <project_id type="integer">111111</project_id>
+    <story_type>feature</story_type>
+    <url>https://www.pivotaltracker.com/story/show/22222222</url>
+    <owned_by>George</owned_by>
+    <estimate type="integer">1</estimate>
+    <current_state>unscheduled</current_state>
+    <description></description>
+    <name>The Rest Of the Things</name>
+    <requested_by>Timmy TheTester</requested_by>
+    <created_at type="datetime">2012/07/03 13:37:21 UTC</created_at>
+    <updated_at type="datetime">2012/09/20 14:10:53 UTC</updated_at>
+    <labels>epic_name</labels>
+  </story>

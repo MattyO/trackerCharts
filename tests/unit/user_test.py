@@ -22,7 +22,7 @@ class UserTest(unittest.TestCase):
 		self.assertEquals(a_user.wip, 1)
 
 	def test_doesnt_updateWip(self):
-		a_user = User("Eric Hankinson")
+		a_user = User("The Shadow")
 		story_xml = ET.parse("data/story_1").getroot()
 		story = Story(story_xml)
 
@@ -43,5 +43,5 @@ class UserTest(unittest.TestCase):
 		story = Story(story_xml)
 		a_user.updateWip(story)
 		user_list = [a_user]
-		self.assertEquals(UserList_toJson(user_list),json.dumps([{"name": "George", "current_stories": [{"name": "All the Things", "id": "33333333"}], "wip": 1}]))
+		self.assertEquals(UserList_toJson(user_list),json.dumps([{"name": "George", "current_stories": [{"name": "The Rest Of the Things", "id": "22222222"}], "wip": 1}]))
 
