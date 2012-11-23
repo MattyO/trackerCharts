@@ -20,14 +20,32 @@ def ProjectList(project_xml):
 	return projects
 
 class Burndown:
-	def __init__(self, project_name, states=[]):
+	def __init__(self, project_name, states=[], possible_states=None):
 		self.project_name = project_name
 		self.states = states
-		if self.states is None:
-			self.states = []
+		self.possible_states = possible_states
+
+		if self.possible_states is None:
+			self.possible_states = ["unstarted", "unscheduled", "accepted", "delivered", "started"]
 
 def burndown_tojson(burndown):
-	return json.dumps({"name":burndown.project_name, "states":burndown.states})
+	return json.dumps({"id":burndown.project_name, "states":burndown.states})
+
+def projectlist_tojson(project_list):
+	dumpable = []
+	for project in project_list:
+		dumpable.append(project.id)
+
+	return json.dumps({"ids":dumpable})
+
+def find_project(project_list, project_id):
+	found_project = None
+	for project in project_list:
+		if project.id == project_id:
+			found_project = project
+			break
+
+	return found_project
 
 def addState(burndown, stories):
 
@@ -50,7 +68,7 @@ def addState(burndown, stories):
 			burndown_state = _increment_burndown_label_state(burndown_state , label, story.current_state)
 			burndown_state = _increment_burndown_label_state(burndown_state , label, "total")
 
-	_normalize_burndown_state(burndown_state)
+	_normalize_burndown_state(burndown_state, burndown.possible_states)
 
 	burndown_state = _append_burndown_state_datetime(burndown_state)
 
@@ -93,10 +111,11 @@ def _append_burndown_state_datetime(state):
 	state["datetime"] = date + " " + time
 	return state
 
-def _normalize_burndown_state(state):
-	for story_states in state["all"].keys():
+def _normalize_burndown_state(state, story_states):
+	for story_state in story_states:
 		for state_label in state.keys():
-				if state[state_label].has_key(story_states) == False:
-					state[state_label][story_states] = 0
+				if state[state_label].has_key(story_state) == False:
+					state[state_label][story_state] = 0
+	return state
 
 

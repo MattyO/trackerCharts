@@ -35,7 +35,7 @@
     </integrations>
   </project>
   <project>
-    <id>666666</id>
+    <id>222222</id>
     <name>Test Project 2</name>
     <iteration_length type="integer">1</iteration_length>
     <week_start_day>Monday</week_start_day>

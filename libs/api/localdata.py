@@ -6,7 +6,7 @@ if os.path.isdir("data") == False:
 	os.mkdir("data")
 
 def saveBurndownStates(burndown, project_id):
-	_save_yaml_thing(burndown, "burndown", project_id, )
+	_save_yaml_thing(burndown, "burndown", project_id)
 
 def getBurndownStates(project_id):
 	return _get_yaml_thing("burndown", project_id)

@@ -4,9 +4,10 @@ import xml.etree.ElementTree as ET
 import sys
 sys.path.append("../../libs")
 
-from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state
+from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, find_project, _normalize_burndown_state
 
 from classes.story import Story
+import config
 
 class ProjectTest(unittest.TestCase):
 	def test_construct_project(self):
@@ -24,6 +25,19 @@ class ProjectListTest(unittest.TestCase):
 		self.assertEqual(len(project_list), 2)
 		self.assertEqual(project_list[0].name, "Test Project")
 		self.assertEqual(project_list[1].name, "Test Project 2")
+	
+	def test_find_project(self):
+		project_list_xml = ET.parse("data/projects").getroot()
+		project_list = ProjectList(project_list_xml)
+
+		project_found = find_project(project_list, '666666')
+		self.assertEqual(project_found.id, '666666')
+
+	def test_cant_find_project(self):
+		project_list_xml = ET.parse("data/projects").getroot()
+		project_list = ProjectList(project_list_xml)
+		project_found = find_project(project_list,'999999')
+		self.assertEqual(project_found, None)
 
 class BurndownTest(unittest.TestCase):
 
@@ -31,6 +45,7 @@ class BurndownTest(unittest.TestCase):
 		burndown = Burndown("test burndown")
 		self.assertEqual(burndown.states, [])
 		self.assertEqual(burndown.project_name, "test burndown")
+		self.assertEqual(burndown.possible_states, ["unstarted", "unscheduled", "accepted", "delivered", "started"])
 
 	def test_needs_burndown_label(self):
 		state = {"all":_initial_state()}
@@ -65,6 +80,13 @@ class BurndownTest(unittest.TestCase):
 		state = {"all":_initial_state()} 
 		state = _append_burndown_state_datetime(state)
 		self.assertIn("datetime", state)
+	
+	def test_normalize_burndown_state(self):
+		state = {"all":{"total":1, "unscheduled":1}, "epic_name":{"total":1, "unscheduled":1}}
+		print config.states("tracker")
+		state = _normalize_burndown_state(state, config.states("tracker")) 
+		self.assertEqual(state, {"all":{"total":1, "unstarted":0, "unscheduled":1, "accepted":0, "delivered":0, "started":0}, "epic_name":{"total":1,  "unstarted":0, "unscheduled":1, "accepted":0, "delivered":0, "started":0}})
+
 
 	def test_add_state(self):
 		burndown = Burndown("test burndown")
@@ -72,7 +94,7 @@ class BurndownTest(unittest.TestCase):
 		story = Story(story_xml)
 		burndown = addState(burndown, [story])
 		print burndown.states
-		self.assertEqual(len(burndown.states), 3)
+		self.assertEqual(len(burndown.states), 1)
 
 if __name__ == "__main__":
 	unittest.main()
