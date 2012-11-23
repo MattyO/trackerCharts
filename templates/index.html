@@ -9,11 +9,13 @@
 	</div>
 
 	<h1> Projects </h1>
-	<ul> 
-		{% for project in projects %}
-		<li> <a href="/{{project.id}}" > {{project.name}} </a> </li>
-		{% endfor %}
-	</ul>
+	<div class="row">
+		<div id="project_list"> 
+			{% for project in projects %}
+			<div class="id-{{project.id}} span6"> <h2>  <a href="/{{project.id}}" > {{project.name}} </a> </h2> </div>
+			{% endfor %}
+		</div>
+	</div>
 
 {% endblock %}
 
