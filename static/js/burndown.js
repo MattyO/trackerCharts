@@ -8,10 +8,35 @@ $(document).ready(function(){
             });
         }
     });
-
-
-
 });
+
+function burndownable(data, label, possible_states, parseDate){
+    $.each(data, function(i,state){
+        var previousStateTotal = state[label].total;
+        $.each(possible_states, function(counter, possible_state){
+            previousStateTotal -= state[label][possible_state]
+            data[i][label][possible_state] = previousStateTotal;
+        });
+        data[i].datetime = parseDate(state.datetime);
+    });
+
+    return data;
+}
+
+function create_areas(label, possible_states, x, y, height){
+    console.log("label"+ label);
+    areas = {};
+    $.each(possible_states,function(state_counter, possible_state){
+        areas[possible_state] = d3.svg.area()
+            .x(function(d){return x(d.datetime);})
+            .y0(function(d){return height;})
+            .y1(function(d){return y(d[label][possible_state]);})
+
+    });
+
+
+    return areas;
+}
 
 function create_burndown(project_id, label, placement){
 
@@ -35,10 +60,10 @@ function create_burndown(project_id, label, placement){
         .scale(y)
         .orient("left")
 
-    var area = d3.svg.area()
+    /* var area = d3.svg.area()
         .x(function(d){return x(d.datetime);})
         .y0(function(d){return height;})
-        .y1(function(d){return y(d[label].total);})
+        .y1(function(d){return y(d[label].total);}) */
 
     var svg = d3.select(placement)
         .append("svg")
@@ -46,30 +71,38 @@ function create_burndown(project_id, label, placement){
             .attr("height", height + margin.top + margin.bottom)
         .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top +")");
-        
-    d3.json(burndown_url, function(data, error){
-        data = data.states
 
-        $.each(data, function(i,state){
-            data[i].all.total = +state.all.total ;
-            data[i].datetime = parseDate(state.datetime);
-        });
+    $.ajax({
+        url:"/possible_states/tracker.json", 
+        dataType:"json",
+        success: function(possible_states){
+            d3.json(burndown_url, function(data, error){
+                data = data.states
+                data = burndownable(data, label, possible_states, parseDate);
+                possible_states.unshift("total");
 
-        x.domain(d3.extent(data, function(d){ return d.datetime; }));
-        y.domain([0, d3.max(data, function(d){ return d[label].total; })]);
+                areas = create_areas(label, possible_states, x, y, height)
 
-        svg.append("path")
-            .datum(data)
-            .attr("class", "area")
-            .attr("d", area);
+                x.domain(d3.extent(data, function(d){ return d.datetime; }));
+                y.domain([0, d3.max(data, function(d){ return d[label].total; })]);
 
-        svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0,"+height+")")
-            .call(xAxis);
-        svg.append("g")
-            .attr("class", "y axis")
-            .call(yAxis);
+                $.each(areas, function(area_counter, area){
+                    svg.append("path")
+                        .datum(data)
+                        .attr("class", "area-" + area_counter)
+                        .attr("d", area);
+                });
 
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0,"+height+")")
+                    .call(xAxis);
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis);
+
+            });
+        }
     });
 }

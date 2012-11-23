@@ -18,7 +18,27 @@ body{
 	stroke: #000;
 	shape-rendering: crispEdges;
 }
-.area{
+
+.area-total{
 	fill: steelblue;
 }
 
+.area-unscheduled{
+	fill: chocolate ;
+}
+
+.area-unstarted{
+	fill: orange ;
+}
+
+.area-started{
+	fill: lightgreen;
+}
+
+.area-delivered{
+	fill: slategray;
+}
+
+.area-accepted{
+	fill: firebrick;
+}

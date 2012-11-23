@@ -51,7 +51,6 @@ def wip_json():
 	project_list = ProjectList(localdata.getProjectsXML())
 	project_ids = map(lambda project: project.id, project_list)
 	stories_xml_list = []
-	app.logger.debug(project_ids)
 	for id in project_ids :
 		stories_xml_list.append(localdata.getStoriesXML(id))
 
