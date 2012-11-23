@@ -1,4 +1,14 @@
 $(document).ready(function(){
+    /*
+    d3.json("/possible_states/tracker.json", function(possible_states, error){
+        d3.select("#project_list")
+                .data(possible_states)
+            .enter().append("div")
+                .attr("class",function(d){ return "area-"+d;} )
+                .text(function(d){return d;});
+    });
+    */
+
     $.ajax({
         url:"/projects.json", 
         dataType:"json",
@@ -12,20 +22,22 @@ $(document).ready(function(){
 
 function burndownable(data, label, possible_states, parseDate){
     $.each(data, function(i,state){
-        var previousStateTotal = state[label].total;
+        var previousStateTotal = 0 ;
         $.each(possible_states, function(counter, possible_state){
-            previousStateTotal -= state[label][possible_state]
+            previousStateTotal += state[label][possible_state]
             data[i][label][possible_state] = previousStateTotal;
         });
         data[i].datetime = parseDate(state.datetime);
+        console.log(data[i][label]);
+
     });
 
     return data;
 }
 
 function create_areas(label, possible_states, x, y, height){
-    console.log("label"+ label);
     areas = {};
+    possible_states = possible_states.reverse()
     $.each(possible_states,function(state_counter, possible_state){
         areas[possible_state] = d3.svg.area()
             .x(function(d){return x(d.datetime);})
@@ -76,10 +88,11 @@ function create_burndown(project_id, label, placement){
         url:"/possible_states/tracker.json", 
         dataType:"json",
         success: function(possible_states){
+                
             d3.json(burndown_url, function(data, error){
                 data = data.states
-                data = burndownable(data, label, possible_states, parseDate);
-                possible_states.unshift("total");
+                data = burndownable(data, label, possible_states.reverse(), parseDate);
+                //possible_states.unshift("total");
 
                 areas = create_areas(label, possible_states, x, y, height)
 

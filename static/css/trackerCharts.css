@@ -20,25 +20,36 @@ body{
 }
 
 .area-total{
-	fill: steelblue;
+	background-color:pink;
+	fill: pink;
 }
 
 .area-unscheduled{
-	fill: chocolate ;
+	background-color:steelblue;
+	fill: steelblue;
 }
 
 .area-unstarted{
+	background-color:orange;
 	fill: orange ;
 }
 
 .area-started{
+	background-color:lightgreen;
 	fill: lightgreen;
 }
 
 .area-delivered{
+	background-color:slategray;
 	fill: slategray;
 }
 
 .area-accepted{
+	background-color:firebrick;
 	fill: firebrick;
+}
+.area-finished
+{
+	background-color:pink;
+	fill: pink;
 }

@@ -26,7 +26,9 @@ class Burndown:
 		self.possible_states = possible_states
 
 		if self.possible_states is None:
-			self.possible_states = ["unstarted", "unscheduled", "accepted", "delivered", "started"]
+			self.possible_states = ["unscheduled", "unstarted", "started", "finished", "delivered", "accepted"]
+		if self.states == None:
+			self.states = []
 
 def burndown_tojson(burndown):
 	return json.dumps({"id":burndown.project_name, "states":burndown.states})
