@@ -1,6 +1,22 @@
+
+body{
+	font: 10px sans-serif;
+}
+
 .chart rect {
 	stroke: white;
 	fill: steelblue;
+}
+
+#wip{
+}
+
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
 }
 .area{
 	fill: steelblue;
