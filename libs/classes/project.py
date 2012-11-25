@@ -34,7 +34,6 @@ def burndown_tojson(burndown):
 	burndown_states = burndown.states
 	burndown_states = sorted(burndown_states, key=lambda state: strptime(state['datetime'],"%Y.%m.%d %H:%M:%S") )
 	for astate in burndown_states:
-		print astate['datetime'] + "datetime:" + str(astate['all']['finished']) +", total:" +  str(astate['all']['total'])
 	return json.dumps({"id":burndown.project_name, "states":burndown_states})
 
 def projectlist_tojson(project_list):
@@ -58,7 +57,6 @@ def addState(burndown, stories):
 	burndown_state = {"all":_initial_state()}
 	for story in stories:
 
-		print "story state: " + story.current_state
 		if _needs_burndown_label_state(burndown_state, "all", story.current_state):
 			burndown_state = _add_burndown_label_state(burndown_state, "all", story.current_state)
 
@@ -76,7 +74,6 @@ def addState(burndown, stories):
 			burndown_state = _increment_burndown_label_state(burndown_state , label, "total")
 
 	burndown_state = _normalize_burndown_state(burndown_state, burndown.possible_states)
-	print "number of finished " + str(burndown_state['all']['finished'])
 
 	burndown_state = _append_burndown_state_datetime(burndown_state)
 
