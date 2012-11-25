@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import sys
 sys.path.append("../../libs")
 
-from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, find_project, _normalize_burndown_state
+from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, find_project, _normalize_burndown_state, filter_on_ids
 
 from classes.story import Story
 import config
@@ -39,13 +39,19 @@ class ProjectListTest(unittest.TestCase):
 		project_found = find_project(project_list,'999999')
 		self.assertEqual(project_found, None)
 
+	def test_filter_on_ids(self):
+		project_list_xml = ET.parse("data/projects").getroot()
+		project_list = ProjectList(project_list_xml)
+		project_list = filter_on_ids(project_list, [666666])
+		self.assertEqual(len(project_list), 1)
+
 class BurndownTest(unittest.TestCase):
 
 	def test_create_class(self):
 		burndown = Burndown("test burndown")
 		self.assertEqual(burndown.states, [])
 		self.assertEqual(burndown.project_name, "test burndown")
-		self.assertEqual(burndown.possible_states, ["unstarted", "unscheduled", "accepted", "delivered", "started"])
+		self.assertEqual(burndown.possible_states, ["unscheduled","unstarted", "started","finished", "delivered", "accepted"])
 
 	def test_needs_burndown_label(self):
 		state = {"all":_initial_state()}
@@ -85,7 +91,7 @@ class BurndownTest(unittest.TestCase):
 		state = {"all":{"total":1, "unscheduled":1}, "epic_name":{"total":1, "unscheduled":1}}
 		print config.states("tracker")
 		state = _normalize_burndown_state(state, config.states("tracker")) 
-		self.assertEqual(state, {"all":{"total":1, "unstarted":0, "unscheduled":1, "accepted":0, "delivered":0, "started":0}, "epic_name":{"total":1,  "unstarted":0, "unscheduled":1, "accepted":0, "delivered":0, "started":0}})
+		self.assertEqual(state, {"all":{"total":1, "unscheduled":1, "unstarted":0, "accepted":0, "started":0,"finished":0, "delivered":0}, "epic_name":{"total":1, "unscheduled":1, "unstarted":0, "accepted":0, "delivered":0, "started":0, "finished":0}})
 
 
 	def test_add_state(self):

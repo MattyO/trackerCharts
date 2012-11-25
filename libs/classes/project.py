@@ -19,6 +19,11 @@ def ProjectList(project_xml):
 
 	return projects
 
+def filter_on_ids(project_list, ignore_ids):
+	project_list = filter(lambda project: int(project.id) not in ignore_ids, project_list)
+	return project_list
+
+
 class Burndown:
 	def __init__(self, project_name, states=[], possible_states=None):
 		self.project_name = project_name

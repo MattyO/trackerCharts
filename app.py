@@ -7,7 +7,7 @@ from flask import Flask, render_template, redirect, url_for, make_response
 from api import tracker
 from api import localdata
 
-from classes.project import Project, ProjectList, Burndown, addState, burndown_tojson, projectlist_tojson, find_project
+from classes.project import Project, ProjectList, Burndown, addState, burndown_tojson, projectlist_tojson, find_project, filter_on_ids
 from classes.story import Story, StoryList 
 from classes.user import  User, UserList, userlist_tojson
 import config
@@ -18,6 +18,7 @@ app.debug = True
 @app.route("/")
 def overview():
 	projects = ProjectList(tracker.getProjects())
+	projects = filter_on_ids(projects, config.ignore)
 	return render_template('index.html', projects=projects)
 
 @app.route("/<int:project_id>")
@@ -36,6 +37,7 @@ def project_json(project_id):
 @app.route("/projects.json")
 def projects_json():
 	project_list = ProjectList(localdata.getProjectsXML())
+	project_list = filter_on_ids(project_list, config.ignore)
 	response = make_response(projectlist_tojson(project_list))
 	response.mimetype="application/json"
 	return response
