@@ -1,5 +1,5 @@
-import sys
-from os import getcwd 
+import sys, os
+from os.path import abspath, dirname, join
 sys.path.append(abspath(join(dirname(__file__),'libs')))
 
 from flask import Flask, render_template, redirect, url_for, make_response
