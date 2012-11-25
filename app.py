@@ -79,25 +79,6 @@ def wip(type=None):
 def config_page():
 	pass
 
-@app.route("/update")
-def update():
-
-	localdata.saveProjectsXML(tracker.getProjects())
-	project_list = ProjectList(localdata.getProjectsXML())
-
-	for project in project_list:
-		test_stories = tracker.getStories(project.id)
-		localdata.saveStoriesXML(test_stories, str(project.id))
-
-	for project in project_list:
-		burndown = Burndown(project.id, localdata.getBurndownStates(project.id))
-		test_stories = StoryList([localdata.getStoriesXML(project.id)])
-		burndown = addState(burndown, test_stories)
-		localdata.saveBurndownStates(burndown.states, project.id)
-
-	return "updated"
-
-
 if __name__ == "__main__":
 	print "running flask"
 	app.run(port=4567, host='0.0.0.0') 
