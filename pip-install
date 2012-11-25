@@ -3,3 +3,5 @@ requests
 pyyaml
 elementtree
 nose
+tornado
+python-daemon
