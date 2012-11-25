@@ -1,6 +1,7 @@
-import sys
-from os import getcwd 
-sys.path.append(getcwd() + "/libs")
+import sys, os
+from os.path import abspath, dirname, join
+sys.path.append(abspath(join(dirname(__file__),'libs')))
+
 
 from api import tracker
 from api import localdata
