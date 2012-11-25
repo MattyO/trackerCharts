@@ -33,7 +33,6 @@ class Burndown:
 def burndown_tojson(burndown):
 	burndown_states = burndown.states
 	burndown_states = sorted(burndown_states, key=lambda state: strptime(state['datetime'],"%Y.%m.%d %H:%M:%S") )
-	for astate in burndown_states:
 	return json.dumps({"id":burndown.project_name, "states":burndown_states})
 
 def projectlist_tojson(project_list):
