@@ -7,7 +7,8 @@ class User:
 		self.current_stories = []
 
 	def updateWip(self, story):
-		if story.owned_by != None and story.owned_by == self.name and story.current_state != "accepted" and story.current_state != "delivered":
+		filtered_states = ["accepted", "delivered", "finished"]
+		if story.owned_by != None and story.owned_by == self.name and story.current_state not in filtered_states:
 			self.wip += 1
 			self.current_stories.append(story)
 	

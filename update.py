@@ -2,6 +2,8 @@ import sys, os
 from os.path import abspath, dirname, join
 sys.path.append(abspath(join(dirname(__file__),'libs')))
 
+#change current working director so the data is found and place in the correct directory. 
+os.chdir(abspath(join(dirname(__file__))))
 
 from api import tracker
 from api import localdata
