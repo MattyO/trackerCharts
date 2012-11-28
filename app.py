@@ -7,7 +7,7 @@ from flask import Flask, render_template, redirect, url_for, make_response
 from api import tracker
 from api import localdata
 
-from classes.project import Project, ProjectList, Burndown, addState, burndown_tojson, projectlist_tojson, find_project, filter_on_ids
+from classes.project import Project, ProjectList, Burndown, addState, burndown_tojson, projectlist_tojson, find_project, filter_on_ids,  burndown_labels, labels_tojson
 from classes.story import Story, StoryList 
 from classes.user import  User, UserList, userlist_tojson
 import config
@@ -25,14 +25,27 @@ def overview():
 def project(project_id):
 	project_list = ProjectList(localdata.getProjectsXML())
 	project_found = find_project(project_list, str(project_id))
+
 	if project_found == None:
 		return redirect(url_for('overview'))
-	return render_template("project.html", project=project_found )
+	
+	project_id = str(project_id)
+	burndown = Burndown(project_id,localdata.getBurndownStates(project_id))
+	labels = burndown_labels(burndown)
+
+	return render_template("project.html", project=project_found, labels=labels )
 
 @app.route("/<int:project_id>/burndown.json")
 def project_json(project_id):
 	project_id = str(project_id)
 	return burndown_tojson(Burndown(project_id,localdata.getBurndownStates(project_id)))
+
+@app.route("/<int:project_id>/labels.json")
+def labels(project_id):
+	project_id = str(project_id)
+	burndown = Burndown(project_id,localdata.getBurndownStates(project_id))
+	labels = burndown_labels(burndown)
+	return labels_tojson(labels)
 	
 @app.route("/projects.json")
 def projects_json():

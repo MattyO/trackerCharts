@@ -35,6 +35,17 @@ class Burndown:
 		if self.states == None:
 			self.states = []
 
+def burndown_labels(burndown):
+	labels = set() 
+	for state in burndown.states:
+		for label in state:
+			labels.add(label)
+	if "datetime" in labels:
+		labels.remove("datetime")
+	
+	return list(sorted(labels))
+
+
 def burndown_tojson(burndown):
 	burndown_states = burndown.states
 	burndown_states = sorted(burndown_states, key=lambda state: strptime(state['datetime'],"%Y.%m.%d %H:%M:%S") )
@@ -46,6 +57,9 @@ def projectlist_tojson(project_list):
 		dumpable.append(project.id)
 
 	return json.dumps({"ids":dumpable})
+
+def labels_tojson(labels):
+	return json.dumps(labels)
 
 def find_project(project_list, project_id):
 	found_project = None

@@ -1,6 +1,12 @@
 {% extends "layout.html" %}
 {% block body %}
-	<h1> {{ project.name }} </h1>
-		<div id="{{ project.id }}" class="burndowns">  </div>
+	<h1 id="{{project.id}}"> {{ project.name }} </h1>
+	{% for label in labels %}
+	<h2> {{label}} </h2>
+	<div id="{{label}}" class="burndown">  </div>
+	{% endfor %}
 
+
+<script type="text/javascript" src="/static/js/burndown.js"> </script>
+<script type="text/javascript" src="/static/js/project.js"> </script>
 {% endblock %}

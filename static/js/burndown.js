@@ -1,25 +1,3 @@
-$(document).ready(function(){
-    /*
-    d3.json("/possible_states/tracker.json", function(possible_states, error){
-        d3.select("#project_list")
-                .data(possible_states)
-            .enter().append("div")
-                .attr("class",function(d){ return "area-"+d;} )
-                .text(function(d){return d;});
-    });
-    */
-
-    $.ajax({
-        url:"/projects.json", 
-        dataType:"json",
-        success: function(data){
-            $.each(data.ids, function(counter, project_id){
-                create_burndown(project_id, "all","#project_list .id-" + project_id);
-            });
-        }
-    });
-});
-
 function burndownable(data, label, possible_states, parseDate){
     $.each(data, function(i,state){
         var previousStateTotal = 0 ;
@@ -28,7 +6,6 @@ function burndownable(data, label, possible_states, parseDate){
             data[i][label][possible_state] = previousStateTotal;
         });
         data[i].datetime = parseDate(state.datetime);
-        console.log(data[i][label]);
 
     });
 
@@ -42,7 +19,7 @@ function create_areas(label, possible_states, x, y, height){
         areas[possible_state] = d3.svg.area()
             .x(function(d){return x(d.datetime);})
             .y0(function(d){return height;})
-            .y1(function(d){return y(d[label][possible_state]);})
+            .y1(function(d){return y(d[label][possible_state]);});
 
     });
 
@@ -55,7 +32,7 @@ function create_burndown(project_id, label, placement){
     var burndown_url = "/"+ project_id + "/burndown.json";
     var margin = {top: 20, right: 20, bottom: 30, left: 50};
     var width = $(placement).width() - margin.left - margin.right;
-    var height = $(placement).width() / 2 - margin.top - margin.bottom;
+    var height = $(placement).height() - margin.top - margin.bottom;
 
     var parseDate = d3.time.format("%Y.%m.%d %H:%M:%S").parse
 
