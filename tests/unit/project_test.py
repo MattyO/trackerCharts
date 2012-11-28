@@ -4,10 +4,11 @@ import xml.etree.ElementTree as ET
 import sys
 sys.path.append("../../libs")
 
-from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, find_project, _normalize_burndown_state, filter_on_ids
+from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, find_project, _normalize_burndown_state, filter_on_ids, burndown_labels, labels_tojson
 
 from classes.story import Story
 import config
+import json
 
 class ProjectTest(unittest.TestCase):
 	def test_construct_project(self):
@@ -101,6 +102,22 @@ class BurndownTest(unittest.TestCase):
 		burndown = addState(burndown, [story])
 		print burndown.states
 		self.assertEqual(len(burndown.states), 1)
+
+	def test_generate_list_labels(self):
+		burndown = Burndown("test burndown")
+		story_xml = ET.parse("data/story_1").getroot()
+		story = Story(story_xml)
+		burndown = addState(burndown, [story])
+		burndown = addState(burndown, [story])
+		self.assertEqual(burndown_labels(burndown),['all','epic_name']) 
+	
+	def test_label_list_tojson(self):
+		burndown = Burndown("test burndown")
+		story_xml = ET.parse("data/story_1").getroot()
+		story = Story(story_xml)
+		burndown = addState(burndown, [story])
+		labels = burndown_labels(burndown) 
+		self.assertEqual(labels_tojson(labels ), json.dumps(['all','epic_name']))
 
 if __name__ == "__main__":
 	unittest.main()
