@@ -9,7 +9,8 @@ from api import flask_helper
 from api import localdata
 from api.localdata import listify
 
-from classes.project import Project, ProjectList, Burndown, addState, burndown_tojson, projectlist_tojson, find_project, filter_on_ids,  burndown_labels, labels_tojson, list_private_ids, reduce_list, list_ids
+from classes.project import Project, ProjectList, projectlist_tojson, find_project, filter_on_ids,  list_private_ids, reduce_list, list_ids
+from classes.burndown import Burndown, addState, burndown_tojson, burndown_labels, labels_tojson
 from classes.story import Story, StoryList 
 from classes.user import  User, UserList, userlist_tojson
 import config
@@ -18,10 +19,9 @@ app = Flask(__name__)
 app.debug = True
 app.secret_key = config.secret_key
 
-@app.route("/")
-def overview():
+def _get_filtered_projects():
 	projects = ProjectList(localdata.getProjectsXML())
-	current_user =flask_helper.safe_session('user_id')
+	current_user = flask_helper.safe_session('user_id')
 
 	visible_user_projects = listify(localdata.get_cached_data(current_user))
 	private_ids = list_private_ids(projects)
@@ -30,6 +30,13 @@ def overview():
 
 	projects = filter_on_ids(projects, private_ids)
 	projects = filter_on_ids(projects, config.ignore)
+
+	return projects
+
+@app.route("/")
+def overview():
+	current_user = flask_helper.safe_session('user_id')
+	projects = _get_filtered_projects()
 
 	return render_template('index.html', projects=projects,user=current_user)
 
@@ -58,7 +65,9 @@ def logout():
 
 @app.route("/<int:project_id>")
 def project(project_id):
-	project_list = ProjectList(localdata.getProjectsXML())
+	current_user =flask_helper.safe_session('user_id')
+	
+	project_list = _get_filtered_projects()
 	project_found = find_project(project_list, str(project_id))
 
 	if project_found == None:
@@ -84,8 +93,7 @@ def labels(project_id):
 	
 @app.route("/projects.json")
 def projects_json():
-	project_list = ProjectList(localdata.getProjectsXML())
-	project_list = filter_on_ids(project_list, config.ignore)
+	project_list = _get_filtered_projects()
 	response = make_response(projectlist_tojson(project_list))
 	response.mimetype="application/json"
 	return response
@@ -99,10 +107,10 @@ def get_states(project_type):
 @app.route("/wip.json")
 def wip_json():
 	project_list = ProjectList(localdata.getProjectsXML())
-	project_ids = map(lambda project: project.id, project_list)
+	project_ids = list_ids(project_list)
 	stories_xml_list = []
 	for id in project_ids :
-		stories_xml_list.append(localdata.getStoriesXML(id))
+		stories_xml_list.append(localdata.getStoriesXML(str(id)))
 
 	stories = StoryList(stories_xml_list)
 	users = UserList(stories)
@@ -114,11 +122,11 @@ def wip_json():
 def wip(type=None):
 
 	project_list = ProjectList(localdata.getProjectsXML())
-	project_ids = map(lambda project: project.id, project_list)
+	project_ids = list_ids(project_list)
 	stories_xml_list = []
-	app.logger.debug(project_ids)
+
 	for id in project_ids :
-		stories_xml_list.append(localdata.getStoriesXML(id))
+		stories_xml_list.append(localdata.getStoriesXML(str(id)))
 
 	stories = StoryList(stories_xml_list)
 	users = UserList(stories)
