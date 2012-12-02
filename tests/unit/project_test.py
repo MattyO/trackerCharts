@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import sys
 sys.path.append("../../libs")
 
-from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, find_project, _normalize_burndown_state, filter_on_ids, burndown_labels, labels_tojson
+from classes.project import Project, ProjectList, Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, find_project, _normalize_burndown_state, filter_on_ids, burndown_labels, labels_tojson, list_private_ids, reduce_list
 
 from classes.story import Story
 import config
@@ -23,7 +23,7 @@ class ProjectListTest(unittest.TestCase):
 		project_list_xml = ET.parse("data/projects").getroot()
 		project_list = ProjectList(project_list_xml)
 		
-		self.assertEqual(len(project_list), 2)
+		self.assertEqual(len(project_list), 3)
 		self.assertEqual(project_list[0].name, "Test Project")
 		self.assertEqual(project_list[1].name, "Test Project 2")
 	
@@ -44,7 +44,25 @@ class ProjectListTest(unittest.TestCase):
 		project_list_xml = ET.parse("data/projects").getroot()
 		project_list = ProjectList(project_list_xml)
 		project_list = filter_on_ids(project_list, [666666])
+		self.assertEqual(len(project_list), 2)
+
+	def test_construct_private_id_list(self):
+		project_list_xml = ET.parse("data/projects").getroot()
+		project_list = ProjectList(project_list_xml)
+		project_ids = list_private_ids(project_list)
+		self.assertEquals(project_ids,[222222, 333333])
+
+	
+	def test_filter_on_viability(self):
+		project_list_xml = ET.parse("data/projects").getroot()
+		project_list = ProjectList(project_list_xml)
+		private_ids = list_private_ids(project_list)
+		project_list = filter_on_ids(project_list, private_ids)
 		self.assertEqual(len(project_list), 1)
+
+	def test_reduce_list(self):
+		private_ids = [222222, 333333, 444444]
+		self.assertEquals(reduce_list(private_ids, [222222,111111]), [333333, 444444])
 
 class BurndownTest(unittest.TestCase):
 

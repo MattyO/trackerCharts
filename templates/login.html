@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+<form method='POST'> 
+	<fieldset>
+		<label> Trello Username </label>
+		<input type="text" name="username" />
+		<label> Trello Password </label>
+		<input type="password" name="password" />
+		<br/>
+		<button type="submit" class='btn' > Login </button>
+	</fieldset>
+</form>
+{% endblock %}

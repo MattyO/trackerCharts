@@ -2,8 +2,28 @@ import yaml
 import xml.etree.ElementTree as ET
 import os
 
-if os.path.isdir("data") == False:
-	os.mkdir("data")
+required_dirs = ["data","data/cache"]
+
+for dir in required_dirs: 
+	if os.path.isdir(dir) == False:
+		os.mkdir(dir)
+
+def get_cached_data(id):
+	cached_data = None
+	if id != None and os.path.exists("data/cache/" + id):
+		with open("data/cache/" + id, 'r') as f:
+			cached_data = yaml.load(f)
+
+	return cached_data 
+
+def cache_data(id,data):
+	with open("data/cache/" + id, 'w') as f:
+		yaml.dump(data, f)
+
+def listify(maybe_a_list):
+	if maybe_a_list == None:
+		maybe_a_list = []
+	return maybe_a_list
 
 def saveBurndownStates(burndown, project_id):
 	_save_yaml_thing(burndown, "burndown", project_id)

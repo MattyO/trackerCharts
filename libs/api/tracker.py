@@ -3,19 +3,26 @@ import config
 import xml.etree.ElementTree as ET
 
 
-def _getAuthToken():
+def get_auth_token(username, password):
 	print "authenticating..."
-	authRequest = requests.get('https://www.pivotaltracker.com/services/v3/tokens/active', auth=(config.trackername, config.trackerpassword))
+	authRequest = requests.get('https://www.pivotaltracker.com/services/v3/tokens/active', auth=(username, password))
 	etAuth = ET.fromstring(authRequest.text)
 	return etAuth.find('guid').text
 
-token = _getAuthToken()
-header={'X-TrackerToken': token}
+def create_auth_header(auth_token):
+	return {'X-TrackerToken': auth_token}
 
-def getProjects():
-	global token, header
+token = get_auth_token(config.trackername, config.trackerpassword)
+header= create_auth_header(token)
 
-	projectRequest = requests.get('https://www.pivotaltracker.com/services/v3/projects',headers=header)
+
+def getProjects(different_token=None):
+	global header
+	request_header = header 
+	if different_token != None:
+		request_header = create_auth_header(different_token)
+
+	projectRequest = requests.get('https://www.pivotaltracker.com/services/v3/projects',headers=request_header)
 	return ET.fromstring(projectRequest.text)
 
 def getStories(tracker_id):

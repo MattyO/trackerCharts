@@ -2,6 +2,9 @@ flask
 requests
 pyyaml
 elementtree
-nose
 tornado
 python-daemon
+
+nose
+pyquery
+zope.testbrowser

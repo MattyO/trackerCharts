@@ -23,6 +23,14 @@ def filter_on_ids(project_list, ignore_ids):
 	project_list = filter(lambda project: int(project.id) not in ignore_ids, project_list)
 	return project_list
 
+def list_private_ids(project_list):
+	return [int(project.id) for project in project_list if project.public == "false"]
+
+def list_ids(project_list):
+	return [int(project.id) for project in project_list]
+
+def reduce_list(a_list, ids_to_remove):
+	return [item for item in a_list if item not in ids_to_remove]
 
 class Burndown:
 	def __init__(self, project_name, states=[], possible_states=None):
