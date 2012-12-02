@@ -1,5 +1,6 @@
 import json
 
+secret_key = 'your-secret-key-for-sessions'
 trackername = 'your-pivotal-username'
 trackerpassword = 'your-pivotal-password'
 ignore = []

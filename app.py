@@ -16,7 +16,7 @@ import config
 
 app = Flask(__name__)
 app.debug = True
-app.secret_key = '\xfdzKV\xfa\xb3\x8fU\x9e\xa7v\xcd\x11\xc3J \xec\x97\x06\xf3d\xe6f2'
+app.secret_key = config.secret_key
 
 @app.route("/")
 def overview():
