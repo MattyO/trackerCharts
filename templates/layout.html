@@ -11,6 +11,22 @@
 
 	</head>
 	<body>
+		<div class="navbar navbar-inverse navbar-static-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<ul class="nav pull-right">
+					{% if user != None %}
+						<li class="navbar-text"> {{ user }} </li>
+						<li class="divider-vertical"> </li>
+						<li> <a href="{{ url_for('logout') }}"> Logout </a> </li>
+					{% else %}
+						<li> <a href="{{ url_for('login') }}"> Login </a> </li>
+					{% endif %}
+
+					</ul>
+				</div>
+			</div>
+		</div>
 		<div class="container">
 			{% block body %} {% endblock %}
 		</div>	

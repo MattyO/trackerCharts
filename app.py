@@ -21,8 +21,9 @@ app.secret_key = config.secret_key
 @app.route("/")
 def overview():
 	projects = ProjectList(localdata.getProjectsXML())
+	current_user =flask_helper.safe_session('user_id')
 
-	visible_user_projects = listify(localdata.get_cached_data(flask_helper.safe_session('user_id')))
+	visible_user_projects = listify(localdata.get_cached_data(current_user))
 	private_ids = list_private_ids(projects)
 	
 	private_ids = reduce_list(private_ids, visible_user_projects)
@@ -30,7 +31,7 @@ def overview():
 	projects = filter_on_ids(projects, private_ids)
 	projects = filter_on_ids(projects, config.ignore)
 
-	return render_template('index.html', projects=projects)
+	return render_template('index.html', projects=projects,user=current_user)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login(): 
