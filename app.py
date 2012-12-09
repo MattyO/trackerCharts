@@ -37,8 +37,9 @@ def _get_filtered_projects():
 def overview():
 	current_user = flask_helper.safe_session('user_id')
 	projects = _get_filtered_projects()
+	possible_states = config.states('tracker')
 
-	return render_template('index.html', projects=projects,user=current_user)
+	return render_template('index.html', projects=projects,user=current_user,states=possible_states)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login(): 
@@ -76,8 +77,9 @@ def project(project_id):
 	project_id = str(project_id)
 	burndown = Burndown(project_id,localdata.getBurndownStates(project_id))
 	labels = burndown_labels(burndown)
+	possible_states = config.states('tracker')
 
-	return render_template("project.html", project=project_found, labels=labels )
+	return render_template("project.html", project=project_found, labels=labels, states=possible_states )
 
 @app.route("/<int:project_id>/burndown.json")
 def project_json(project_id):

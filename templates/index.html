@@ -10,9 +10,14 @@
 
 	<h1> Projects </h1>
 	<div class="row">
+	<div class="span2">
+	{% for state in states %}
+		<div class="area-label area-{{state}}"> {{state}} </div>
+	{% endfor %}
+	</div>
 		<div id="project_list"> 
 			{% for project in projects %}
-			<div class="id-{{project.id}} span6 burndown"> <h2>  <a href="/{{project.id}}" > {{project.name}} </a> </h2> </div>
+			<div class="id-{{project.id}} span5 burndown"> <h2>  <a href="/{{project.id}}" > {{project.name}} </a> </h2> </div>
 			{% endfor %}
 		</div>
 	</div>

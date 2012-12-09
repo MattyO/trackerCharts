@@ -1,10 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
 	<h1 id="{{project.id}}"> {{ project.name }} </h1>
-	{% for label in labels %}
-	<h2> {{label}} </h2>
-	<div id="{{label}}" class="burndown">  </div>
-	{% endfor %}
+
+	<div class="row">
+		<div class="span2">
+		{% for state in states %}
+			<div class="area-label area-{{state}}"> {{state}} </div>
+		{% endfor %}
+		</div>
+
+		<div class="span10">
+		{% for label in labels %}
+		<h2> {{label}} </h2>
+		<div id="{{label}}" class="burndown">  </div>
+		{% endfor %}
+		</div>
+	</div>
 
 
 <script type="text/javascript" src="/static/js/burndown.js"> </script>

@@ -54,6 +54,14 @@ body{
 	fill: pink;
 }
 
+.area-label{
+	padding: 10px;
+	font-size: 12pt;
+	margin:10px;
+	text-align: right;
+}
+
+
 .burndown{
 	height:200px;
 }
