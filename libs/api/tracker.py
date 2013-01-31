@@ -12,13 +12,24 @@ def get_auth_token(username, password):
 def create_auth_header(auth_token):
 	return {'X-TrackerToken': auth_token}
 
-token = get_auth_token(config.trackername, config.trackerpassword)
-header= create_auth_header(token)
+token = None
+header = None
+
+#token = get_auth_token(config.trackername, config.trackerpassword)
+#header= create_auth_header(token)
+
+def get_token():
+		return get_auth_token(config.trackername, config.trackerpassword)
+
+def get_header():
+	global header
+	if header != None:
+		header= create_auth_header(get_token())
+
 
 
 def getProjects(different_token=None):
-	global header
-	request_header = header 
+	request_header = get_header()
 	if different_token != None:
 		request_header = create_auth_header(different_token)
 
@@ -26,9 +37,8 @@ def getProjects(different_token=None):
 	return ET.fromstring(projectRequest.text)
 
 def getStories(tracker_id):
-	global header
 
-	story_request = requests.get("https://www.pivotaltracker.com/services/v3/projects/" + tracker_id + "/stories",headers=header)
+	story_request = requests.get("https://www.pivotaltracker.com/services/v3/projects/" + tracker_id + "/stories",headers=get_header())
 
 	return ET.fromstring(story_request.text)
 
