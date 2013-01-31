@@ -1,5 +1,6 @@
 import sys, os
 from os.path import abspath, dirname, join
+
 sys.path.append(abspath(join(dirname(__file__),'libs')))
 
 from flask import Flask, render_template, redirect, url_for, make_response, session, request
@@ -16,7 +17,7 @@ from classes.user import  User, UserList, userlist_tojson
 import config
 
 app = Flask(__name__)
-app.debug = True
+app.debug = config.debug
 app.secret_key = config.secret_key
 
 def _get_filtered_projects():
