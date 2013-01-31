@@ -2,8 +2,10 @@ import unittest
 import xml.etree.ElementTree as ET
 import sys
 import json
+import os
+from os.path import abspath, dirname, join
 
-sys.path.append("../../libs")
+sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 import config
 from classes.story import Story
@@ -11,6 +13,14 @@ from classes.story import Story
 from classes.burndown import Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, _normalize_burndown_state, burndown_labels, labels_tojson
 
 class BurndownTest(unittest.TestCase):
+	@classmethod
+	def setUpClass(cls):
+		setattr(cls, 'old_dir', os.getcwd())
+		os.chdir(dirname(__file__))
+
+	@classmethod
+	def tearDownClass(cls):
+		os.chdir(cls.old_dir)
 
 	def test_create_class(self):
 		burndown = Burndown("test burndown")

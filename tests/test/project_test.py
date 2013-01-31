@@ -1,8 +1,10 @@
 import unittest
 import xml.etree.ElementTree as ET
-
 import sys
-sys.path.append("../../libs")
+import os
+from os.path import abspath, dirname, join
+
+sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.project import Project, ProjectList,  find_project,  filter_on_ids,   list_private_ids, reduce_list
 
@@ -10,6 +12,15 @@ from classes.story import Story
 import config
 
 class ProjectTest(unittest.TestCase):
+	@classmethod
+	def setUpClass(cls):
+		setattr(cls, 'old_dir', os.getcwd())
+		os.chdir(dirname(__file__))
+
+	@classmethod
+	def tearDownClass(cls):
+		os.chdir(cls.old_dir)
+
 	def test_construct_project(self):
 		project_xml = ET.parse("data/project_1").getroot()
 		print project_xml
@@ -17,6 +28,14 @@ class ProjectTest(unittest.TestCase):
 		self.assertEqual(test_project.name, "Test Project")
 	
 class ProjectListTest(unittest.TestCase):
+	@classmethod
+	def setUpClass(cls):
+		setattr(cls, 'old_dir', os.getcwd())
+		os.chdir(dirname(__file__))
+
+	@classmethod
+	def tearDownClass(cls):
+		os.chdir(cls.old_dir)
 
 	def test_construct_project_list(self):
 		project_list_xml = ET.parse("data/projects").getroot()
