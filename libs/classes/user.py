@@ -32,16 +32,6 @@ def UserList(story_list):
 def userlist_tojson(user_list):
 	dumpable = []
 	for user in user_list:
-		userobj = {"name":user.name, "wip":user.wip, "stories":[]}
-		for story in user.current_stories:
-			userobj["stories"].append(story.name)
-		dumpable.append(userobj)
-
-	return json.dumps(dumpable) 
-
-def userlist_tojson(user_list):
-	dumpable = []
-	for user in user_list:
 		current_stories = [] 
 		for story in user.current_stories:
 			updated_at = _tracker_string_to_time(story.updated_at)
@@ -51,7 +41,7 @@ def userlist_tojson(user_list):
 				"days_since_updated":_days_since_last_updated(updated_at, datetime.today()),
 				"id":story.id
 			})
-			dumpable.append({"name":user.name, "wip":user.wip, "current_stories":current_stories})
+		dumpable.append({"name":user.name, "wip":user.wip, "current_stories":current_stories})
 	return json.dumps(dumpable, sort_keys=True)
 
 

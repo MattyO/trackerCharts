@@ -9,7 +9,7 @@ from os.path import abspath, dirname, join
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.user import User, UserList, userlist_tojson, _days_since_last_updated, _tracker_string_to_time
-from classes.story import Story
+from classes.story import Story, StoryList
 
 print join(dirname(__file__),'../../libs')
 class UserTest(unittest.TestCase):
@@ -53,6 +53,16 @@ class UserTest(unittest.TestCase):
 		a_user.updateWip(story)
 		self.assertEquals(a_user.wip, 0)
 	
+
+	def test_UserList_tojson_two_stories(self):
+		story_list = StoryList([ET.parse("data/project_stories_1"), ET.parse("data/project_stories_2")])
+		users = UserList(story_list)
+
+		output = json.loads(userlist_tojson(users))
+		print output
+		self.assertEqual(output[0]['wip'],4)
+		self.assertEqual(len(output),1)
+
 	def test_UserList_tojson(self):
 		a_user = User("George")
 		story_xml = ET.parse("data/story_2").getroot()

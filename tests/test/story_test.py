@@ -8,7 +8,6 @@ sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.story import Story, StoryList
 
-
 class StoryTest(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
@@ -18,7 +17,6 @@ class StoryTest(unittest.TestCase):
 	@classmethod
 	def tearDownClass(cls):
 		os.chdir(cls.old_dir)
-
 
 	def test_story_construct(self):
 		story_xml = ET.parse("data/story_1").getroot()
