@@ -23,13 +23,14 @@ def get_token():
 
 def get_header():
 	global header
-	if header != None:
+	if header == None:
 		header= create_auth_header(get_token())
-
+	return header
 
 
 def getProjects(different_token=None):
 	request_header = get_header()
+
 	if different_token != None:
 		request_header = create_auth_header(different_token)
 
