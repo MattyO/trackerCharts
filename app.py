@@ -12,8 +12,9 @@ from api.localdata import listify
 
 from classes.project import Project, ProjectList, projectlist_tojson, find_project, filter_on_ids,  list_private_ids, reduce_list, list_ids
 from classes.burndown import Burndown, addState, burndown_tojson, burndown_labels, labels_tojson
-from classes.story import Story, StoryList 
+from classes.story import Story, StoryList, keep_by_ids, ids_for_in_progress,story_ids_for_project
 from classes.user import  User, UserList, userlist_tojson
+
 import config
 
 app = Flask(__name__)
@@ -34,13 +35,34 @@ def _get_filtered_projects():
 
 	return projects
 
+def _all_stories():
+	project_list = ProjectList(localdata.getProjectsXML())
+	project_ids = list_ids(project_list)
+	stories_xml_list = []
+
+	for id in project_ids :
+		stories_xml_list.append(localdata.getStoriesXML(str(id)))
+
+	stories = StoryList(stories_xml_list)
+
+	return stories
+
 @app.route("/")
 def overview():
 	current_user = flask_helper.safe_session('user_id')
 	projects = _get_filtered_projects()
 	possible_states = config.states('tracker')
+	stories = _all_stories()
+	stories_to_keep = []
 
-	return render_template('index.html', projects=projects,user=current_user,states=possible_states)
+	for project in projects:
+		stories_to_keep += story_ids_for_project(stories, project.id)
+
+	stories = keep_by_ids(stories, stories_to_keep)
+	in_progress_ids = ids_for_in_progress(stories)
+	stories = keep_by_ids(stories, in_progress_ids)
+
+	return render_template('index.html', projects=projects,user=current_user,states=possible_states, stories=stories)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login(): 
@@ -106,6 +128,7 @@ def get_states(project_type):
 	response = make_response(config.states_tojson(config.states(project_type)))
 	response.mimetype = "application/json"
 	return response
+
 
 @app.route("/wip.json")
 def wip_json():

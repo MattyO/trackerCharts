@@ -7,6 +7,16 @@
 			<div id="wip"> </div>
 		</div>
 	</div>
+	
+	<h3> Story Age </h3>
+	<div class="row">
+		{% for story in stories %}
+		<div class="span2">
+			<b> {{ story.days_since_last_updated }} </b> - {{ story.name}}
+		</div>
+		{% endfor %}
+	</div>
+
 
 	<h1> Projects </h1>
 	<div class="row">

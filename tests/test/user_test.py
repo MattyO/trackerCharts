@@ -8,8 +8,8 @@ from os.path import abspath, dirname, join
 
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
-from classes.user import User, UserList, userlist_tojson, _days_since_last_updated, _tracker_string_to_time
-from classes.story import Story, StoryList
+from classes.user import User, UserList, userlist_tojson
+from classes.story import Story, StoryList, _days_since_last_updated, _tracker_string_to_time
 
 print join(dirname(__file__),'../../libs')
 class UserTest(unittest.TestCase):
@@ -82,16 +82,4 @@ class UserTest(unittest.TestCase):
 					}], 
 					"wip": 1
 				}], sort_keys=True))
-
-	def test_days_since_last_updated(self):
-		self.assertEqual(
-				_days_since_last_updated(datetime(2012, 1, 12), datetime(2012, 2, 14)), 
-				33)
-
-	def test_tracker_string_to_time(self):
-		self.assertEqual(
-				_tracker_string_to_time("2012/09/20 14:10:53 UTC"),
-				datetime(2012, 9, 20, 14, 10, 53))
-
-
 

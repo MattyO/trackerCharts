@@ -1,7 +1,7 @@
 <stories count="4" total="4" type="array">
   <story>
     <id type="integer">55555555</id>
-    <project_id type="integer">666666</project_id>
+    <project_id type="integer">111111</project_id>
     <story_type>feature</story_type>
     <url>http://www.pivotaltracker.com/story/show/55555555</url>
     <estimate type="integer">1</estimate>
@@ -15,7 +15,7 @@
   </story>
   <story>
     <id type="integer">77777777</id>
-    <project_id type="integer">666666</project_id>
+    <project_id type="integer">111111</project_id>
     <story_type>feature</story_type>
     <url>http://www.pivotaltracker.com/story/show/77777777</url>
     <estimate type="integer">1</estimate>
@@ -30,7 +30,7 @@
   </story>
   <story>
     <id type="integer">88888888</id>
-    <project_id type="integer">666666</project_id>
+    <project_id type="integer">111111</project_id>
     <story_type>feature</story_type>
     <url>http://www.pivotaltracker.com/story/show/39902187</url>
     <estimate type="integer">-1</estimate>
@@ -43,8 +43,8 @@
     <labels>super_epic</labels>
   </story>
   <story>
-    <id type="integer">99999999</id>
-    <project_id type="integer">666666</project_id>
+    <id type="integer">22222222</id>
+    <project_id type="integer">111111</project_id>
     <story_type>feature</story_type>
     <url>http://www.pivotaltracker.com/story/show/99999999</url>
     <estimate type="integer">-1</estimate>

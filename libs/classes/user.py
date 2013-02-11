@@ -7,7 +7,7 @@ def _days_since_last_updated(first_date, second_date):
 def _tracker_string_to_time(tracker_time):
 	return datetime.strptime(tracker_time, "%Y/%m/%d %H:%M:%S UTC")
 
-class User: 
+class User:
 	def __init__(self, name):
 		self.name = name
 		self.wip = 0
@@ -34,15 +34,13 @@ def userlist_tojson(user_list):
 	for user in user_list:
 		current_stories = [] 
 		for story in user.current_stories:
-			updated_at = _tracker_string_to_time(story.updated_at)
 			current_stories.append({
 				"name":story.name,
 				"updated_at": story.updated_at,
-				"days_since_updated":_days_since_last_updated(updated_at, datetime.today()),
+				"days_since_updated":story.days_since_last_updated,
 				"id":story.id
 			})
 		dumpable.append({"name":user.name, "wip":user.wip, "current_stories":current_stories})
 	return json.dumps(dumpable, sort_keys=True)
-
 
 
