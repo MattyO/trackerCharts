@@ -12,7 +12,7 @@
 	<div class="row">
 		{% for story in stories %}
 		<div class="span2">
-			<b> {{ story.days_since_last_updated }} </b> - {{ story.name}}
+			<b> {{ story.days_since_last_updated }} </b> <br/> Project: {{story.project_name}} <br/> Story: {{ story.name }}
 		</div>
 		{% endfor %}
 	</div>

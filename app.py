@@ -13,7 +13,7 @@ from api.localdata import listify
 
 from classes.project import Project, ProjectList, projectlist_tojson, find_project, filter_on_ids,  list_private_ids, reduce_list, list_ids
 from classes.burndown import Burndown, addState, burndown_tojson, burndown_labels, labels_tojson
-from classes.story import Story, StoryList, keep_by_ids, ids_for_in_progress,story_ids_for_project, prettify_stories
+from classes.story import Story, StoryList, keep_by_ids, ids_for_in_progress,story_ids_for_project, prettify_stories, add_project_names
 from classes.user import  User, UserList, userlist_tojson
 
 import config
@@ -61,8 +61,10 @@ def overview():
 
     stories = keep_by_ids(stories, stories_to_keep)
     in_progress_ids = ids_for_in_progress(stories)
+
     stories = keep_by_ids(stories, in_progress_ids)
     stories = prettify_stories(stories)
+    stories = add_project_names(stories, projects)
 
     return render_template('index.html', projects=projects,user=current_user,states=possible_states, stories=stories)
 

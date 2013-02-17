@@ -1,4 +1,11 @@
+import sys
+import os
+from os.path import abspath, dirname, join
 from datetime import datetime
+
+sys.path.append(abspath(join(dirname(__file__),'../../libs')))
+
+from classes.project import Project
 
 DAYS_IN_A_MONTH = 30
 
@@ -24,13 +31,31 @@ def _tracker_string_to_time(tracker_time):
     return datetime.strptime(tracker_time, "%Y/%m/%d %H:%M:%S UTC")
 
 def prettify_stories(stories):
-    for story in stories: 
+    for story in stories:
         story_days = story.days_since_last_updated
         story.days_since_last_updated = _prettify_days(story_days)
 
     return stories
 
-class Story: 
+def add_project_name(story, projects):
+    name_found = "NA" 
+
+    projects_found = filter(lambda project: project.id == story.project_id, projects)
+
+    if len(projects_found) == 1:
+        name_found = projects_found[0].name
+
+    setattr(story, "project_name", name_found)
+
+    return story
+
+def add_project_names(stories, projects):
+    for story in stories:
+        story = add_project_name(story, projects)
+
+    return stories
+
+class Story:
     def __init__(self, xml):
         attrs = dict()
         self.lables = []

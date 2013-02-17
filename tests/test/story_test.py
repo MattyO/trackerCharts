@@ -8,7 +8,8 @@ from os.path import abspath, dirname, join
 
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
-from classes.story import Story, StoryList, keep_by_ids, exclude_by_ids, story_ids_for_project, _days_since_last_updated, _tracker_string_to_time, _prettify_days
+from classes.project import Project
+from classes.story import Story, StoryList, keep_by_ids, exclude_by_ids, story_ids_for_project, _days_since_last_updated, _tracker_string_to_time, _prettify_days, add_project_name, add_project_names
 
 class StoryTest(unittest.TestCase):
     #setup and tear down classes needed to run test from any directory
@@ -35,6 +36,31 @@ class StoryTest(unittest.TestCase):
 
     def test_prettyify_days_show_half_months(self):
         self.assertEqual(_prettify_days("48"), "1 and a half months")
+
+    def test_add_project_name_None(self):
+        story = Story(ET.parse("data/story_1").getroot())
+        project_list = [Project(ET.parse("data/project_1").getroot())]
+
+        new_story = add_project_name(story, project_list)
+
+        self.assertEqual(new_story.project_name, "NA")
+
+    def test_add_project_name_with_name(self):
+        story = Story(ET.parse("data/story_3").getroot())
+        project_list = [Project(ET.parse("data/project_1").getroot())]
+
+        new_story = add_project_name(story, project_list)
+
+        self.assertEqual(new_story.project_name, "Test Project")
+
+    def test_add_project_names(self):
+        story_list = [Story(ET.parse("data/story_3").getroot())]
+        project_list = [Project(ET.parse("data/project_1").getroot())]
+
+        new_story_list = add_project_names(story_list, project_list)
+
+        self.assertEqual(new_story_list[0].project_name, "Test Project")
+
 
     def test_story_owned_by_is_None(self):
         story_xml = ET.parse("data/story_1").getroot()
