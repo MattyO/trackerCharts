@@ -16,7 +16,7 @@ def _prettify_days(num_days):
         pretty_string += " months"
 
     else:
-        pretty_string = num_days + " days"
+        pretty_string = str(num_days) + " days"
 
     return pretty_string
 
