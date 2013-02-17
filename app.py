@@ -1,4 +1,5 @@
-import sys, os
+import sys
+import os
 from os.path import abspath, dirname, join
 
 sys.path.append(abspath(join(dirname(__file__),'libs')))
@@ -6,13 +7,13 @@ sys.path.append(abspath(join(dirname(__file__),'libs')))
 from flask import Flask, render_template, redirect, url_for, make_response, session, request
 
 from api import tracker
-from api import flask_helper
 from api import localdata
+from api import flask_helper
 from api.localdata import listify
 
 from classes.project import Project, ProjectList, projectlist_tojson, find_project, filter_on_ids,  list_private_ids, reduce_list, list_ids
 from classes.burndown import Burndown, addState, burndown_tojson, burndown_labels, labels_tojson
-from classes.story import Story, StoryList, keep_by_ids, ids_for_in_progress,story_ids_for_project
+from classes.story import Story, StoryList, keep_by_ids, ids_for_in_progress,story_ids_for_project, prettify_stories
 from classes.user import  User, UserList, userlist_tojson
 
 import config
@@ -22,147 +23,149 @@ app.debug = config.debug
 app.secret_key = config.secret_key
 
 def _get_filtered_projects():
-	projects = ProjectList(localdata.getProjectsXML())
-	current_user = flask_helper.safe_session('user_id')
+    projects = ProjectList(localdata.getProjectsXML())
+    current_user = flask_helper.safe_session('user_id')
 
-	visible_user_projects = listify(localdata.get_cached_data(current_user))
-	private_ids = list_private_ids(projects)
-	
-	private_ids = reduce_list(private_ids, visible_user_projects)
+    visible_user_projects = listify(localdata.get_cached_data(current_user))
+    private_ids = list_private_ids(projects)
 
-	projects = filter_on_ids(projects, private_ids)
-	projects = filter_on_ids(projects, config.ignore)
+    private_ids = reduce_list(private_ids, visible_user_projects)
 
-	return projects
+    projects = filter_on_ids(projects, private_ids)
+    projects = filter_on_ids(projects, config.ignore)
+
+    return projects
 
 def _all_stories():
-	project_list = ProjectList(localdata.getProjectsXML())
-	project_ids = list_ids(project_list)
-	stories_xml_list = []
+    project_list = ProjectList(localdata.getProjectsXML())
+    project_ids = list_ids(project_list)
+    stories_xml_list = []
 
-	for id in project_ids :
-		stories_xml_list.append(localdata.getStoriesXML(str(id)))
+    for id in project_ids :
+            stories_xml_list.append(localdata.getStoriesXML(str(id)))
 
-	stories = StoryList(stories_xml_list)
+    stories = StoryList(stories_xml_list)
 
-	return stories
+    return stories
 
 @app.route("/")
 def overview():
-	current_user = flask_helper.safe_session('user_id')
-	projects = _get_filtered_projects()
-	possible_states = config.states('tracker')
-	stories = _all_stories()
-	stories_to_keep = []
+    current_user = flask_helper.safe_session('user_id')
+    projects = _get_filtered_projects()
+    possible_states = config.states('tracker')
+    stories = _all_stories()
+    stories_to_keep = []
 
-	for project in projects:
-		stories_to_keep += story_ids_for_project(stories, project.id)
+    for project in projects:
+        stories_to_keep += story_ids_for_project(stories, project.id)
 
-	stories = keep_by_ids(stories, stories_to_keep)
-	in_progress_ids = ids_for_in_progress(stories)
-	stories = keep_by_ids(stories, in_progress_ids)
+    stories = keep_by_ids(stories, stories_to_keep)
+    in_progress_ids = ids_for_in_progress(stories)
+    stories = keep_by_ids(stories, in_progress_ids)
+    stories = prettify_stories(stories)
 
-	return render_template('index.html', projects=projects,user=current_user,states=possible_states, stories=stories)
+    return render_template('index.html', projects=projects,user=current_user,states=possible_states, stories=stories)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login(): 
-	if request.method == 'GET' :
-		return render_template("login.html")
+    if request.method == 'GET' :
+        return render_template("login.html")
 
-	username = request.form['username']
-	user_token = tracker.get_auth_token(request.form['username'], request.form['password'])
+    username = request.form['username']
+    user_token = tracker.get_auth_token(request.form['username'], request.form['password'])
 
-	project_list = ProjectList(tracker.getProjects(user_token))
-	project_ids = list_ids(project_list)
-	localdata.cache_data(username, project_ids)
+    project_list = ProjectList(tracker.getProjects(user_token))
+    project_ids = list_ids(project_list)
+    localdata.cache_data(username, project_ids)
 
-	session['user_id'] = username
+    session['user_id'] = username
 
-	return redirect(url_for('overview'))
+    return redirect(url_for('overview'))
 
 @app.route('/logout')
 def logout():
-	if 'user_id' in session:
-		del session['user_id']
-	return redirect(url_for('overview'))
+    if 'user_id' in session:
+        del session['user_id']
+    return redirect(url_for('overview'))
 
 
 @app.route("/<int:project_id>")
 def project(project_id):
-	current_user =flask_helper.safe_session('user_id')
-	
-	project_list = _get_filtered_projects()
-	project_found = find_project(project_list, str(project_id))
+    current_user =flask_helper.safe_session('user_id')
 
-	if project_found == None:
-		return redirect(url_for('overview'))
-	
-	project_id = str(project_id)
-	burndown = Burndown(project_id,localdata.getBurndownStates(project_id))
-	labels = burndown_labels(burndown)
-	possible_states = config.states('tracker')
+    project_list = _get_filtered_projects()
+    project_found = find_project(project_list, str(project_id))
 
-	return render_template("project.html", project=project_found, labels=labels, states=possible_states )
+    if project_found == None:
+        return redirect(url_for('overview'))
+
+    project_id = str(project_id)
+    burndown = Burndown(project_id,localdata.getBurndownStates(project_id))
+    labels = burndown_labels(burndown)
+    possible_states = config.states('tracker')
+
+    return render_template("project.html", project=project_found, labels=labels, states=possible_states )
 
 @app.route("/<int:project_id>/burndown.json")
 def project_json(project_id):
-	project_id = str(project_id)
-	return burndown_tojson(Burndown(project_id,localdata.getBurndownStates(project_id)))
+    project_id = str(project_id)
+    return burndown_tojson(Burndown(project_id,localdata.getBurndownStates(project_id)))
 
 @app.route("/<int:project_id>/labels.json")
 def labels(project_id):
-	project_id = str(project_id)
-	burndown = Burndown(project_id,localdata.getBurndownStates(project_id))
-	labels = burndown_labels(burndown)
-	return labels_tojson(labels)
-	
+    project_id = str(project_id)
+    burndown = Burndown(project_id,localdata.getBurndownStates(project_id))
+    labels = burndown_labels(burndown)
+    return labels_tojson(labels)
+
 @app.route("/projects.json")
 def projects_json():
-	project_list = _get_filtered_projects()
-	response = make_response(projectlist_tojson(project_list))
-	response.mimetype="application/json"
-	return response
+    project_list = _get_filtered_projects()
+    response = make_response(projectlist_tojson(project_list))
+    response.mimetype="application/json"
+    return response
 
 @app.route("/possible_states/<project_type>.json")
 def get_states(project_type):
-	response = make_response(config.states_tojson(config.states(project_type)))
-	response.mimetype = "application/json"
-	return response
+    response = make_response(config.states_tojson(config.states(project_type)))
+    response.mimetype = "application/json"
+    return response
 
 
 @app.route("/wip.json")
 def wip_json():
-	project_list = ProjectList(localdata.getProjectsXML())
-	project_ids = list_ids(project_list)
-	stories_xml_list = []
-	for id in project_ids :
-		stories_xml_list.append(localdata.getStoriesXML(str(id)))
+    project_list = ProjectList(localdata.getProjectsXML())
+    project_ids = list_ids(project_list)
+    stories_xml_list = []
 
-	stories = StoryList(stories_xml_list)
-	users = UserList(stories)
+    for id in project_ids :
+        stories_xml_list.append(localdata.getStoriesXML(str(id)))
 
-	return userlist_tojson(users)
+    stories = StoryList(stories_xml_list)
+    users = UserList(stories)
+
+    return userlist_tojson(users)
 
 
 @app.route("/wip")
 def wip(type=None):
 
-	project_list = ProjectList(localdata.getProjectsXML())
-	project_ids = list_ids(project_list)
-	stories_xml_list = []
+    project_list = ProjectList(localdata.getProjectsXML())
+    project_ids = list_ids(project_list)
+    stories_xml_list = []
 
-	for id in project_ids :
-		stories_xml_list.append(localdata.getStoriesXML(str(id)))
+    for id in project_ids :
+        stories_xml_list.append(localdata.getStoriesXML(str(id)))
 
-	stories = StoryList(stories_xml_list)
-	users = UserList(stories)
+    stories = StoryList(stories_xml_list)
+    users = UserList(stories)
 
-	return render_template('wip.html', projects=project_list , users=users)
+    return render_template('wip.html', projects=project_list , users=users)
 
 @app.route("/config/")
 def config_page():
-	pass
+    pass
 
 if __name__ == "__main__":
-	print "running flask"
-	app.run(port=4567, host='0.0.0.0') 
+    print "running flask"
+    app.run(port=4567, host='0.0.0.0') 
