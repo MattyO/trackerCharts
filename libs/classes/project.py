@@ -4,12 +4,12 @@ import json
 from time import strftime, strptime, localtime 
 
 class Project:
-	def __init__(self, xml):
-		attrs = dict()
-		for child in xml:
-			if len(child.findall('.//*')) == 0:
-				attrs[child.tag] = child.text
-		self.__dict__ = attrs
+    def __init__(self, xml):
+        attrs = dict()
+        for child in xml:
+            if len(child.findall('.//*')) == 0:
+                        attrs[child.tag] = child.text
+        self.__dict__ = attrs
 
 def ProjectList(project_xml):
 	projects = [] 

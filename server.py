@@ -6,7 +6,7 @@ import daemon
 
 log = open('tornado.log', 'a+')
 ctx = daemon.DaemonContext(stdout=log, stderr=log,
-		working_directory='.')
+    working_directory='.')
 ctx.open() 
 
 http_server = HTTPServer(WSGIContainer(app))
