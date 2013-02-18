@@ -8,6 +8,7 @@ from os.path import abspath, dirname, join
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 import config
+from api.localdata import xml_to_dictonary
 from classes.story import Story
 
 from classes.burndown import Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, _normalize_burndown_state, burndown_labels, labels_tojson
@@ -72,7 +73,7 @@ class BurndownTest(unittest.TestCase):
 	def test_add_state(self):
 		burndown = Burndown("test burndown")
 		story_xml = ET.parse("data/story_1").getroot()
-		story = Story(story_xml)
+		story = Story(xml_to_dictonary(story_xml))
 		burndown = addState(burndown, [story])
 		print burndown.states
 		self.assertEqual(len(burndown.states), 1)
@@ -80,7 +81,7 @@ class BurndownTest(unittest.TestCase):
 	def test_generate_list_labels(self):
 		burndown = Burndown("test burndown")
 		story_xml = ET.parse("data/story_1").getroot()
-		story = Story(story_xml)
+		story = Story(xml_to_dictonary(story_xml))
 		burndown = addState(burndown, [story])
 		burndown = addState(burndown, [story])
 		self.assertEqual(burndown_labels(burndown),['all','epic_name']) 
@@ -88,7 +89,7 @@ class BurndownTest(unittest.TestCase):
 	def test_label_list_tojson(self):
 		burndown = Burndown("test burndown")
 		story_xml = ET.parse("data/story_1").getroot()
-		story = Story(story_xml)
+		story = Story(xml_to_dictonary(story_xml))
 		burndown = addState(burndown, [story])
 		labels = burndown_labels(burndown) 
 		self.assertEqual(labels_tojson(labels ), json.dumps(['all','epic_name']))

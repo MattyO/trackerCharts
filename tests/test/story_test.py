@@ -10,6 +10,7 @@ sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.project import Project
 from classes.story import Story, StoryList, keep_by_ids, exclude_by_ids, story_ids_for_project, _days_since_last_updated, _tracker_string_to_time, _prettify_days, add_project_name, add_project_names
+from api.localdata import xml_to_dictonary
 
 class StoryTest(unittest.TestCase):
     #setup and tear down classes needed to run test from any directory
@@ -25,8 +26,20 @@ class StoryTest(unittest.TestCase):
 
     def test_story_construct_from_xml(self):
         story_xml = ET.parse("data/story_1").getroot()
-        story = Story(story_xml)
+        story_dict = xml_to_dictonary(story_xml)
+        print story_dict
+
+        story = Story(story_dict)
         self.assertEqual(story.name, "All The Things")
+
+    def test_story_has_label(self):
+        story_xml = ET.parse("data/story_1").getroot()
+        story_dict = xml_to_dictonary(story_xml)
+
+        story = Story(story_dict)
+
+        self.assertEqual(story.labels, ["epic_name"])
+
 
     def test_prettyify_days_less_than_month(self):
         self.assertEqual(_prettify_days("3"), "3 days")
@@ -38,7 +51,7 @@ class StoryTest(unittest.TestCase):
         self.assertEqual(_prettify_days("48"), "1 and a half months")
 
     def test_add_project_name_None(self):
-        story = Story(ET.parse("data/story_1").getroot())
+        story = Story( xml_to_dictonary(ET.parse("data/story_1").getroot()))
         project_list = [Project(ET.parse("data/project_1").getroot())]
 
         new_story = add_project_name(story, project_list)
@@ -46,7 +59,7 @@ class StoryTest(unittest.TestCase):
         self.assertEqual(new_story.project_name, "NA")
 
     def test_add_project_name_with_name(self):
-        story = Story(ET.parse("data/story_3").getroot())
+        story = Story(xml_to_dictonary(ET.parse("data/story_3").getroot()))
         project_list = [Project(ET.parse("data/project_1").getroot())]
 
         new_story = add_project_name(story, project_list)
@@ -54,7 +67,8 @@ class StoryTest(unittest.TestCase):
         self.assertEqual(new_story.project_name, "Test Project")
 
     def test_add_project_names(self):
-        story_list = [Story(ET.parse("data/story_3").getroot())]
+        story_dict = xml_to_dictonary(ET.parse("data/story_3").getroot())
+        story_list = [Story(story_dict)]
         project_list = [Project(ET.parse("data/project_1").getroot())]
 
         new_story_list = add_project_names(story_list, project_list)
@@ -64,17 +78,21 @@ class StoryTest(unittest.TestCase):
 
     def test_story_owned_by_is_None(self):
         story_xml = ET.parse("data/story_1").getroot()
-        story = Story(story_xml)
+        story_dict = xml_to_dictonary(story_xml)
+        print story_dict
+        story = Story(story_dict)
         self.assertEqual(story.owned_by, None)
 
     def test_story_owned_by_is_set(self):
         story_xml = ET.parse("data/story_2").getroot()
-        story = Story(story_xml)
+        story_dict = xml_to_dictonary(story_xml)
+        story = Story(story_dict)
         self.assertEqual(story.owned_by, "George")
 
     def test_story_has_days_since_last_updated(self):
         story_xml = ET.parse("data/story_2").getroot()
-        story = Story(story_xml)
+        story_dict = xml_to_dictonary(story_xml)
+        story = Story(story_dict)
         self.assertEqual(
                         story.days_since_last_updated, 
                         _days_since_last_updated(_tracker_string_to_time(story.updated_at),datetime.today())

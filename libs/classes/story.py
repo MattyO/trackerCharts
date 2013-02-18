@@ -6,6 +6,7 @@ from datetime import datetime
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.project import Project
+from api.localdata import xml_to_dictonary
 
 DAYS_IN_A_MONTH = 30
 
@@ -55,23 +56,27 @@ def add_project_names(stories, projects):
 
     return stories
 
+def _set_default(dictonary, key, default_value):
+    if dictonary.has_key(key) is False:
+        dictonary[key] = default_value
+    return dictonary
+
+def _split_labels(story_attributes):
+    if story_attributes.has_key("labels"):
+        print story_attributes['labels']
+        story_attributes['labels'] = story_attributes['labels'].split(",")
+
+    return story_attributes
+
 class Story:
-    def __init__(self, xml):
-        attrs = dict()
-        self.lables = []
-        for child in xml:
-            if len(child.findall('.//*')) == 0:
-                if child.tag == "labels":
-                    attrs[child.tag] = child.text.split(",")
-                else:
-                    attrs[child.tag] = child.text
+    def __init__(self, attrs):
+        updated_at = _tracker_string_to_time(attrs['updated_at'])
+        last_updated = _days_since_last_updated( updated_at, datetime.today())
+        attrs = _split_labels(attrs)
 
-        if attrs.has_key('owned_by') is False:
-            attrs['owned_by'] = None
-        if attrs.has_key('labels') is False:
-            attrs['labels'] = []
-
-        attrs['days_since_last_updated'] = _days_since_last_updated(_tracker_string_to_time(attrs['updated_at']),datetime.today())
+        attrs = _set_default(attrs , 'labels', [])
+        attrs = _set_default(attrs , 'owned_by', None)
+        attrs = _set_default(attrs , 'days_since_last_updated', last_updated )
 
         self.__dict__ = attrs
 
@@ -85,7 +90,7 @@ def StoryList(story_xml_list):
 
     for story_set in story_xml_list:
         for story_xml in story_set.findall('story'):
-            story_list.append(Story(story_xml))
+            story_list.append(Story(xml_to_dictonary(story_xml)))
 
     return story_list
 
