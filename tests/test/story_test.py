@@ -52,7 +52,7 @@ class StoryTest(unittest.TestCase):
 
     def test_add_project_name_None(self):
         story = Story( xml_to_dictonary(ET.parse("data/story_1").getroot()))
-        project_list = [Project(ET.parse("data/project_1").getroot())]
+        project_list = [Project(xml_to_dictonary(ET.parse("data/project_1").getroot()))]
 
         new_story = add_project_name(story, project_list)
 
@@ -60,7 +60,7 @@ class StoryTest(unittest.TestCase):
 
     def test_add_project_name_with_name(self):
         story = Story(xml_to_dictonary(ET.parse("data/story_3").getroot()))
-        project_list = [Project(ET.parse("data/project_1").getroot())]
+        project_list = [Project(xml_to_dictonary(ET.parse("data/project_1").getroot()))]
 
         new_story = add_project_name(story, project_list)
 
@@ -69,7 +69,7 @@ class StoryTest(unittest.TestCase):
     def test_add_project_names(self):
         story_dict = xml_to_dictonary(ET.parse("data/story_3").getroot())
         story_list = [Story(story_dict)]
-        project_list = [Project(ET.parse("data/project_1").getroot())]
+        project_list = [Project(xml_to_dictonary(ET.parse("data/project_1").getroot()))]
 
         new_story_list = add_project_names(story_list, project_list)
 

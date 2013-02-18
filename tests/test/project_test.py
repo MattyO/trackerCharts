@@ -9,6 +9,7 @@ sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 from classes.project import Project, ProjectList,  find_project,  filter_on_ids,   list_private_ids, reduce_list
 
 from classes.story import Story
+from api.localdata import xml_to_dictonary
 import config
 
 class ProjectTest(unittest.TestCase):
@@ -23,8 +24,7 @@ class ProjectTest(unittest.TestCase):
 
 	def test_construct_project(self):
 		project_xml = ET.parse("data/project_1").getroot()
-		print project_xml
-		test_project = Project(project_xml)
+		test_project = Project(xml_to_dictonary(project_xml))
 		self.assertEqual(test_project.name, "Test Project")
 	
 class ProjectListTest(unittest.TestCase):
