@@ -36,8 +36,9 @@ def _get_filtered_projects():
 
     return projects
 
-def _all_stories(project_ids):
+def _stories_for(project_ids):
 
+    stories_xml_list = []
     for id in project_ids :
             stories_xml_list.append(localdata.getStoriesXML(str(id)))
 
@@ -50,7 +51,9 @@ def overview():
     current_user = flask_helper.safe_session('user_id')
     projects = _get_filtered_projects()
     possible_states = config.states('tracker')
-    stories = _all_stories([project.id for project in projects])
+
+    project_ids = [project.id for project in projects]
+    stories = _stories_for(project_ids)
 
     in_progress_ids = ids_for_in_progress(stories)
 
