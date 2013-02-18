@@ -70,16 +70,16 @@ class UserTest(unittest.TestCase):
         a_user.updateWip(story)
         user_list = [a_user]
 
-            self.assertEquals(
-                        userlist_tojson(user_list),
-                        json.dumps([{
-                                "name": "George",
-                                "current_stories": [{
-                                    "id": "22222222",
-                                    "name": "The Rest Of the Things",
-                                    "updated_at":"2012/09/20 14:10:53 UTC",
-                                    "days_since_updated":_days_since_last_updated(_tracker_string_to_time(story.updated_at), datetime.today())
-                                }], 
-                                "wip": 1
-                        }], sort_keys=True))
+        self.assertEquals(
+                    userlist_tojson(user_list),
+                    json.dumps([{
+                            "name": "George",
+                            "current_stories": [{
+                                "id": "22222222",
+                                "name": "The Rest Of the Things",
+                                "updated_at":"2012/09/20 14:10:53 UTC",
+                                "days_since_updated":_days_since_last_updated(_tracker_string_to_time(story.updated_at), datetime.today())
+                            }], 
+                            "wip": 1
+                    }], sort_keys=True))
 
