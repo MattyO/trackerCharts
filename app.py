@@ -38,11 +38,8 @@ def _get_filtered_projects():
 
 def _stories_for(project_ids):
 
-    stories_xml_list = []
-    for id in project_ids :
-            stories_xml_list.append(localdata.getStoriesXML(str(id)))
-
-    stories = StoryList(stories_xml_list)
+    story_xml_list = [localdata.getStoriesXML(str(id)) for id in project_ids]
+    stories = StoryList(story_xml_list)
 
     return stories
 
