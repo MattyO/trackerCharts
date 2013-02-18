@@ -10,7 +10,7 @@ sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.user import User, UserList, userlist_tojson
 from classes.story import Story, StoryList, _days_since_last_updated, _tracker_string_to_time
-from api.localdata import xml_to_dictonary
+from helpers.xml import xml_to_dictonary
 
 class UserTest(unittest.TestCase):
 

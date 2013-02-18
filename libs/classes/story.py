@@ -6,7 +6,7 @@ from datetime import datetime
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.project import Project
-from api.localdata import xml_to_dictonary
+from helpers.xml import xml_to_dictonary, convert_elements
 
 DAYS_IN_A_MONTH = 30
 
@@ -51,10 +51,7 @@ def add_project_name(story, projects):
     return story
 
 def add_project_names(stories, projects):
-    for story in stories:
-        story = add_project_name(story, projects)
-
-    return stories
+    return map(lambda story: add_project_name(story, projects),stories)
 
 def _set_default(dictonary, key, default_value):
     if dictonary.has_key(key) is False:
@@ -86,11 +83,12 @@ def is_in_progress(story):
 
 
 def StoryList(story_xml_list):
-    story_list = []
 
-    for story_set in story_xml_list:
-        for story_xml in story_set.findall('story'):
-            story_list.append(Story(xml_to_dictonary(story_xml)))
+    converter = lambda proj_xml: Story(xml_to_dictonary(proj_xml))
+    nested_story_list = map(lambda stories_xml: convert_elements(converter, stories_xml, 'story'), story_xml_list)
+
+    #fastest way to flatten array of arrays
+    story_list = [story for stories in nested_story_list for story in stories]
 
     return story_list
 

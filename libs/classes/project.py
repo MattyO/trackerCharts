@@ -9,15 +9,15 @@ from os.path import abspath, dirname, join
 
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
-from api.localdata import xml_to_dictonary
+from helpers.xml import xml_to_dictonary, convert_elements
 
 class Project:
     def __init__(self, attrs):
         self.__dict__ = attrs
 
 def ProjectList(project_list_xml):
-    return [ Project(xml_to_dictonary(project))
-            for project in project_list_xml.findall('project') ]
+    converter = lambda proj_xml: Project(xml_to_dictonary(proj_xml)) 
+    return convert_elements( converter, project_list_xml, 'project')
 
 def filter_on_ids(project_list, ignore_ids):
     project_list = filter(lambda project: int(project.id) not in ignore_ids, project_list)

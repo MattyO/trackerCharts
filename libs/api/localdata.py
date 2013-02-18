@@ -8,14 +8,6 @@ for dir in required_dirs:
     if os.path.isdir(dir) == False:
         os.mkdir(dir)
 
-def xml_to_dictonary(xml):
-    dictonary = {}
-    for child in xml:
-        if len(child.findall('.//*')) == 0:
-            dictonary[child.tag] = child.text
-
-    return dictonary
-
 def get_cached_data(id):
     cached_data = None
     if id != None and os.path.exists("data/cache/" + id):

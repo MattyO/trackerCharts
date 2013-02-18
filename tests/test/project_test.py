@@ -9,7 +9,7 @@ sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 from classes.project import Project, ProjectList,  find_project,  filter_on_ids,   list_private_ids, reduce_list
 
 from classes.story import Story
-from api.localdata import xml_to_dictonary
+from helpers.xml import xml_to_dictonary 
 import config
 
 class ProjectTest(unittest.TestCase):

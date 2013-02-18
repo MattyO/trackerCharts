@@ -10,7 +10,7 @@ sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 from classes.project import Project
 from classes.story import Story, StoryList, keep_by_ids, exclude_by_ids, story_ids_for_project, _days_since_last_updated, _tracker_string_to_time, _prettify_days, add_project_name, add_project_names
-from api.localdata import xml_to_dictonary
+from helpers.xml import xml_to_dictonary
 
 class StoryTest(unittest.TestCase):
     #setup and tear down classes needed to run test from any directory

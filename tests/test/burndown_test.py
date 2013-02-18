@@ -8,7 +8,7 @@ from os.path import abspath, dirname, join
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
 import config
-from api.localdata import xml_to_dictonary
+from helpers.xml import xml_to_dictonary
 from classes.story import Story
 
 from classes.burndown import Burndown, addState, _append_burndown_state_datetime, _initial_state, _needs_burndown_label, _needs_burndown_label_state, _add_burndown_label, _add_burndown_label_state, _increment_burndown_label_state, _normalize_burndown_state, burndown_labels, labels_tojson
