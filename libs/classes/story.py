@@ -60,7 +60,6 @@ def _set_default(dictonary, key, default_value):
 
 def _split_labels(story_attributes):
     if story_attributes.has_key("labels"):
-        print story_attributes['labels']
         story_attributes['labels'] = story_attributes['labels'].split(",")
 
     return story_attributes

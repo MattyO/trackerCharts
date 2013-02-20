@@ -11,7 +11,7 @@ from api import localdata
 from api import flask_helper
 from api.localdata import listify
 
-from classes.project import Project, ProjectList, projectlist_tojson, find_project, filter_on_ids,  list_private_ids, reduce_list, list_ids
+from classes.project import Project, ProjectList, projectlist_tojson, find_project, filter_on_ids,  list_private_ids, reduce_list, list_ids, remove_private_projects
 from classes.burndown import Burndown, addState, burndown_tojson, burndown_labels, labels_tojson
 from classes.story import Story, StoryList, keep_by_ids, ids_for_in_progress,story_ids_for_project, prettify_stories, add_project_names
 from classes.user import  User, UserList, userlist_tojson
@@ -26,18 +26,15 @@ def _get_filtered_projects():
     projects = ProjectList(localdata.getProjectsXML())
     current_user = flask_helper.safe_session('user_id')
 
-    visible_user_projects = listify(localdata.get_cached_data(current_user))
-    private_ids = list_private_ids(projects)
+    user_projects = listify(localdata.get_cached_data(current_user))
 
-    private_ids = reduce_list(private_ids, visible_user_projects)
+    projects = remove_private_projects(projects, user_projects)
+    projects = filter_on_ids(projects,  config.ignore)
 
-    projects = filter_on_ids(projects, private_ids)
-    projects = filter_on_ids(projects, config.ignore)
+    return remove_private_projects(projects, user_projects)
 
-    return projects
 
 def _stories_for(project_ids):
-
     story_xml_list = [localdata.getStoriesXML(str(id)) for id in project_ids]
     stories = StoryList(story_xml_list)
 
@@ -49,7 +46,7 @@ def overview():
     projects = _get_filtered_projects()
     possible_states = config.states('tracker')
 
-    project_ids = [project.id for project in projects]
+    project_ids = list_ids(projects)
     stories = _stories_for(project_ids)
 
     in_progress_ids = ids_for_in_progress(stories)
@@ -130,10 +127,8 @@ def get_states(project_type):
 def wip_json():
     project_list = ProjectList(localdata.getProjectsXML())
     project_ids = list_ids(project_list)
-    stories_xml_list = []
 
-    for id in project_ids :
-        stories_xml_list.append(localdata.getStoriesXML(str(id)))
+    stories_xml_list = [localdata.getStoriesXML(str(id)) for id in project_ids]
 
     stories = StoryList(stories_xml_list)
     users = UserList(stories)
@@ -146,10 +141,8 @@ def wip(type=None):
 
     project_list = ProjectList(localdata.getProjectsXML())
     project_ids = list_ids(project_list)
-    stories_xml_list = []
 
-    for id in project_ids :
-        stories_xml_list.append(localdata.getStoriesXML(str(id)))
+    stories_xml_list = [localdata.getStoriesXML(str(id)) for id in project_ids]
 
     stories = StoryList(stories_xml_list)
     users = UserList(stories)

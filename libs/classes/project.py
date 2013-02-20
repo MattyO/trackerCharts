@@ -32,6 +32,14 @@ def list_ids(project_list):
 def reduce_list(a_list, ids_to_remove):
     return [item for item in a_list if item not in ids_to_remove]
 
+def remove_private_projects(projects, user_projects_ids):
+    private_ids = list_private_ids(projects)
+    private_ids = reduce_list(private_ids, user_projects_ids)
+
+    projects = filter_on_ids(projects, private_ids)
+
+    return projects
+
 class Burndown:
     def __init__(self, project_name, states=[], possible_states=None):
         self.project_name = project_name
