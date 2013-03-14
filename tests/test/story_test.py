@@ -13,30 +13,36 @@ from classes.story import Story, StoryList, keep_by_ids, exclude_by_ids, story_i
 from helpers.xml import xml_to_dictonary
 
 class StoryTest(unittest.TestCase):
-    #setup and tear down classes needed to run test from any directory
-    #and still find files in /test/data directory
-    @classmethod
-    def setUpClass(cls):
-        setattr(cls, 'old_dir', os.getcwd())
-        os.chdir(dirname(__file__))
-
-    @classmethod
-    def tearDownClass(cls):
-        os.chdir(cls.old_dir)
 
     def test_story_construct_from_xml(self):
-        story_xml = ET.parse("data/story_1").getroot()
+        xml_string = '''
+        <story> 
+            <name>All The Things</name>
+            <id>3333333</id>
+            <updated_at>2012/09/20 14:10:53 UTC</updated_at>
+            <extra>this is extra</extra>
+        </story>
+        '''
+        story_xml = ET.fromstring(xml_string)
         story_dict = xml_to_dictonary(story_xml)
-        print story_dict
 
         story = Story(story_dict)
         self.assertEqual(story.name, "All The Things")
 
-    def test_story_has_label(self):
-        story_xml = ET.parse("data/story_1").getroot()
-        story_dict = xml_to_dictonary(story_xml)
+    def test_story_has_default_label_attr(self):
+        story = Story({
+            "name":"Some Thigns",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
 
-        story = Story(story_dict)
+        self.assertEqual(story.labels, [])
+
+    def test_story_has_label(self):
+        story = Story({
+            "name":"Some Thigns",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC",
+            "labels":"epic_name"})
 
         self.assertEqual(story.labels, ["epic_name"])
 
@@ -51,25 +57,44 @@ class StoryTest(unittest.TestCase):
         self.assertEqual(_prettify_days("48"), "1 and a half months")
 
     def test_add_project_name_None(self):
-        story = Story( xml_to_dictonary(ET.parse("data/story_1").getroot()))
-        project_list = [Project(xml_to_dictonary(ET.parse("data/project_1").getroot()))]
+        story = Story({
+            "name":"Some Thigns",
+            "project_id":"111111",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC",
+            "labels":"epic_name"})
+
+        project_list = [
+                Project({"id":"222222", "name":"Test Project"})]
 
         new_story = add_project_name(story, project_list)
 
         self.assertEqual(new_story.project_name, "NA")
 
     def test_add_project_name_with_name(self):
-        story = Story(xml_to_dictonary(ET.parse("data/story_3").getroot()))
-        project_list = [Project(xml_to_dictonary(ET.parse("data/project_1").getroot()))]
+        story = Story({
+            "name":"Some Thigns",
+            "project_id":"111111",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
+
+        project_list = [
+                Project({"id":"111111", "name":"Test Project"})]
 
         new_story = add_project_name(story, project_list)
 
         self.assertEqual(new_story.project_name, "Test Project")
 
     def test_add_project_names(self):
-        story_dict = xml_to_dictonary(ET.parse("data/story_3").getroot())
-        story_list = [Story(story_dict)]
-        project_list = [Project(xml_to_dictonary(ET.parse("data/project_1").getroot()))]
+        story = Story({
+            "name":"Some Thigns",
+            "project_id":"111111",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
+        story_list = [story]
+
+        project_list = [
+                Project({"id":"111111", "name":"Test Project"})]
 
         new_story_list = add_project_names(story_list, project_list)
 
@@ -77,66 +102,113 @@ class StoryTest(unittest.TestCase):
 
 
     def test_story_owned_by_is_None(self):
-        story_xml = ET.parse("data/story_1").getroot()
-        story_dict = xml_to_dictonary(story_xml)
-        print story_dict
-        story = Story(story_dict)
+        story = Story({
+            "name":"Some Thigns",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
+
         self.assertEqual(story.owned_by, None)
 
     def test_story_owned_by_is_set(self):
-        story_xml = ET.parse("data/story_2").getroot()
-        story_dict = xml_to_dictonary(story_xml)
-        story = Story(story_dict)
+        story = Story({
+            "name":"Some Thigns",
+            "owned_by":"George",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
+
         self.assertEqual(story.owned_by, "George")
 
     def test_story_has_days_since_last_updated(self):
-        story_xml = ET.parse("data/story_2").getroot()
-        story_dict = xml_to_dictonary(story_xml)
-        story = Story(story_dict)
+        story = Story({
+            "name":"Some Thigns",
+            "owned_by":"George",
+            "id":"2222222",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
+
+        should_return = _days_since_last_updated(
+                            _tracker_string_to_time(story.updated_at),
+                            datetime.today())
+
         self.assertEqual(
-                        story.days_since_last_updated, 
-                        _days_since_last_updated(_tracker_string_to_time(story.updated_at),datetime.today())
-                        )
+                story.days_since_last_updated, 
+                should_return)
 
 
 
 class StoryListTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        setattr(cls, 'old_dir', os.getcwd())
-        os.chdir(dirname(__file__))
-
-    @classmethod
-    def tearDownClass(cls):
-        os.chdir(cls.old_dir)
-
 
     def test_construct_story_list(self):
-        story_list_xml = [ET.parse("data/project_stories_1").getroot(), ET.parse("data/project_stories_2").getroot()]
+        project_1_stories ='''
+        <stories>
+            <story>
+                <name>Test Story 1</name>
+                <id>3333333</id>
+                <updated_at>2012/09/20 14:10:53 UTC</updated_at>
+                <extra>this is extra</extra>
+            </story>
+            <story>
+                <name>All The Rest of the Things</name>
+                <id>4444444</id>
+                <updated_at>2012/09/20 14:10:53 UTC</updated_at>
+                <extra>this is extra</extra>
+            </story>
+            <story>
+                <name>Some things we forgot</name>
+                <id>5555555</id>
+                <updated_at>2012/09/20 14:10:53 UTC</updated_at>
+                <extra>this is extra</extra>
+            </story>
+        </stories>
+        '''
+        project_2_stories = '''
+        <stories> 
+            <story>
+                <name>Some things we forgot</name>
+                <id>6666666</id>
+                <updated_at>2012/09/20 14:10:53 UTC</updated_at>
+                <extra>this is extra</extra>
+            </story>
+        </stories>
+        '''
+
+        story_list_xml = [
+                ET.fromstring(project_1_stories),
+                ET.fromstring(project_2_stories)]
+
         story_list = StoryList(story_list_xml)
-        self.assertEqual(len(story_list), 8)
+        self.assertEqual(len(story_list), 4)
         self.assertEqual(story_list[0].name, "Test Story 1")
 
     def test_exclude_by_ids(self):
-        story_list_xml = [ET.parse("data/project_stories_1").getroot(), ET.parse("data/project_stories_2").getroot()]
-        story_list = StoryList(story_list_xml)
+        story_list = [ 
+                Story({"id":"3333333", "name":"Test Story 1","project_id":"111111","updated_at":"2012/09/20 14:10:53 UTC"}),
+                Story({"id":"4444444", "name":"All The Rest of the Things","project_id":"4444444","updated_at":"2012/09/20 14:10:53 UTC"}) ]
 
-        reducted_story_list = exclude_by_ids(story_list, ['22222222'])
-        self.assertEqual(len(reducted_story_list), 7)
+        reducted_story_list = exclude_by_ids(story_list, ['4444444'])
+
+        self.assertEqual(len(reducted_story_list), 1)
+        self.assertEqual(reducted_story_list[0].id, '3333333')
+
 
     def test_keep_by_ids(self):
-        story_list_xml = [ET.parse("data/project_stories_1").getroot(), ET.parse("data/project_stories_2").getroot()]
-        story_list = StoryList(story_list_xml)
+        story_list = [ 
+                Story({"id":"3333333", "name":"Test Story 1","project_id":"111111","updated_at":"2012/09/20 14:10:53 UTC"}),
+                Story({"id":"4444444", "name":"All The Rest of the Things","project_id":"4444444","updated_at":"2012/09/20 14:10:53 UTC"}) ]
 
-        reducted_story_list = keep_by_ids(story_list, ['22222222'])
+        reducted_story_list = keep_by_ids(story_list, ['3333333'])
+
         self.assertEqual(len(reducted_story_list), 1)
-        self.assertEqual(reducted_story_list[0].id, '22222222')
+        self.assertEqual(reducted_story_list[0].id, '3333333')
 
-    def test_id_for_in_progress(self):
-        story_list_xml = [ET.parse("data/project_stories_1").getroot(), ET.parse("data/project_stories_2").getroot()]
-        story_list = StoryList(story_list_xml)
+    def test_id_for_projects(self):
+        story_list = [ 
+                Story({"id":"3333333", "name":"Test Story 1","project_id":"111111","updated_at":"2012/09/20 14:10:53 UTC"}),
+                Story({"id":"5555555", "name":"All The Rest of the Things","project_id":"4444444","updated_at":"2012/09/20 14:10:53 UTC"}) ]
+
         story_id_list = story_ids_for_project(story_list, '111111')
-        self.assertEqual(len(story_id_list), 4)
+
+        self.assertEqual(len(story_id_list), 1)
+        self.assertEqual(story_id_list[0], '3333333')
 
     def test_days_since_last_updated(self):
         self.assertEqual(

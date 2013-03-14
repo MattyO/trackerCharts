@@ -67,15 +67,21 @@ class BurndownTest(unittest.TestCase):
 		state = {"all":{"total":1, "unscheduled":1}, "epic_name":{"total":1, "unscheduled":1}}
 		print config.states("tracker")
 		state = _normalize_burndown_state(state, config.states("tracker")) 
-		self.assertEqual(state, {"all":{"total":1, "unscheduled":1, "unstarted":0, "accepted":0, "started":0,"finished":0, "delivered":0}, "epic_name":{"total":1, "unscheduled":1, "unstarted":0, "accepted":0, "delivered":0, "started":0, "finished":0}})
+		self.assertEqual(state, {
+                    "all":{"total":1, "unscheduled":1, "unstarted":0, "accepted":0, "started":0,"finished":0, "delivered":0}, 
+                    "epic_name":{"total":1, "unscheduled":1, "unstarted":0, "accepted":0, "delivered":0, "started":0, "finished":0}})
 
 
 	def test_add_state(self):
 		burndown = Burndown("test burndown")
-		story_xml = ET.parse("data/story_1").getroot()
-		story = Story(xml_to_dictonary(story_xml))
+                story=Story({
+                    "id":"111111", 
+                    "current_state":"unscheduled", 
+                    "name":"The Story",
+                    "updated_at":"2012/09/20 14:10:53 UTC"})
+
 		burndown = addState(burndown, [story])
-		print burndown.states
+
 		self.assertEqual(len(burndown.states), 1)
 
 	def test_generate_list_labels(self):

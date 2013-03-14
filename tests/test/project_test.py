@@ -6,7 +6,7 @@ from os.path import abspath, dirname, join
 
 sys.path.append(abspath(join(dirname(__file__),'../../libs')))
 
-from classes.project import Project, ProjectList,  find_project,  filter_on_ids,   list_private_ids, reduce_list, remove_private_projects
+from classes.project import Project, ProjectList,  find_project,  filter_on_ids,   list_private_ids, reduce_list, remove_private_projects, list_ids
 
 from classes.story import Story
 from helpers.xml import xml_to_dictonary 
@@ -105,6 +105,16 @@ class ProjectListTest(unittest.TestCase):
 
         self.assertEqual(len(project_list), 2)
         self.assertEqual(project_list[0].id, '111111')
+        self.assertEqual(project_list[1].id, '222222')
+
+    def test_list_ids(self):
+        project_list = [
+                Project({"id": "111111", "public": "true", "name":"Test Project 1"}),
+                Project({"id": "222222", "public": "false", "name":"Test Project 2"}),
+                Project({"id": "333333", "public": "false", "name":"Test Project 3"})]
+        ids = list_ids(project_list)
+        self.assertEqual(ids,[ 111111, 222222, 333333])
+        
 
     def test_construct_private_id_list(self):
         project_list = [

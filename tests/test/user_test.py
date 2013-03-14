@@ -31,35 +31,33 @@ class UserTest(unittest.TestCase):
 
     def test_updateWip(self):
         a_user = User("George")
-        story_xml = ET.parse("data/story_2").getroot()
-        story = Story(xml_to_dictonary(story_xml))
+        story = Story({
+            "name":"Some Thigns",
+            "id":"2222222",
+            "current_state":"",
+            "owned_by":"George",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
 
         a_user.updateWip(story)
         self.assertEquals(a_user.wip, 1)
 
     def test_doesnt_updateWip(self):
         a_user = User("The Shadow")
-        story_xml = ET.parse("data/story_1").getroot()
-        story = Story(xml_to_dictonary(story_xml))
+        story = Story({
+            "name":"Some Thigns",
+            "id":"2222222",
+            "current_state":"",
+            "owned_by":"George",
+            "updated_at":"2012/09/20 14:10:53 UTC"})
 
         a_user.updateWip(story)
         self.assertEquals(a_user.wip, 0)
-
-    def test_doesnt_updateWip_wrong_user(self):
-        a_user = User("matt")
-        story_xml = ET.parse("data/story_1").getroot()
-        story = Story(xml_to_dictonary(story_xml))
-
-        a_user.updateWip(story)
-        self.assertEquals(a_user.wip, 0)
-
 
     def test_UserList_tojson_two_stories(self):
         story_list = StoryList([ET.parse("data/project_stories_1"), ET.parse("data/project_stories_2")])
         users = UserList(story_list)
 
         output = json.loads(userlist_tojson(users))
-        print output
         self.assertEqual(output[0]['wip'],4)
         self.assertEqual(len(output),1)
 
